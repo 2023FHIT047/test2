@@ -1,0 +1,161 @@
+@import 'tailwindcss';
+
+@theme {
+  /* Dynamic Professional Palette */
+  --color-nature-50: #f0f9f3;
+  --color-nature-100: #e1f2e6;
+  --color-nature-200: #c2e5cf;
+  --color-nature-500: #1faf5c;
+  --color-nature-600: #16a34a;
+  --color-nature-700: #15803d;
+  --color-nature-800: #166534;
+  --color-nature-900: #14532d;
+  --color-nature-950: #022c12;
+
+  --color-harvest-500: #f59e0b;
+  --color-harvest-600: #d97706;
+
+  --font-sans: 'Outfit', 'Inter', system-ui, sans-serif;
+
+  /* Custom Shadows for Premium Feel */
+  --shadow-glass: 0 8px 30px rgba(0, 0, 0, 0.04);
+  --shadow-glass-hover: 0 20px 50px rgba(22, 163, 74, 0.08);
+  --shadow-modern: 0 4px 20px rgba(0, 0, 0, 0.02);
+  --shadow-modern-hover: 0 24px 48px rgba(0, 0, 0, 0.06);
+  --shadow-btn-primary: 0 10px 20px rgba(22, 163, 74, 0.2);
+  --shadow-btn-primary-hover: 0 15px 30px rgba(22, 163, 74, 0.3);
+}
+
+@layer base {
+  body {
+    @apply bg-[#f8fafc] text-slate-900 antialiased selection:bg-nature-100 selection:text-nature-900;
+    font-family: var(--font-sans);
+  }
+}
+
+/* Premium Design Elements */
+.glass-card {
+  @apply bg-white/70 backdrop-blur-xl border border-white/50 rounded-[2rem] shadow-glass transition-all duration-500;
+}
+
+.glass-card:hover {
+  @apply bg-white/90 shadow-glass-hover -translate-y-2;
+}
+
+.modern-card {
+  @apply bg-white border border-slate-100/80 rounded-[2rem] shadow-modern hover:shadow-modern-hover transition-all duration-500;
+}
+
+/* Form Elements Enhancement */
+.label-text {
+  @apply block text-xs font-black text-slate-500 mb-2 uppercase tracking-widest;
+}
+
+.input-field {
+  @apply w-full bg-slate-50 border border-slate-200/60 rounded-2xl px-5 py-4 outline-none transition-all duration-300 placeholder:text-slate-400 font-bold focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5 shadow-sm;
+}
+
+/* Button Refinement */
+.btn-primary {
+  @apply relative overflow-hidden bg-nature-600 hover:bg-nature-500 text-white rounded-2xl font-black py-4 px-8 transition-all duration-500 active:scale-[0.98] shadow-btn-primary hover:shadow-btn-primary-hover disabled:opacity-50;
+}
+
+.btn-secondary {
+  @apply bg-white border border-slate-200 text-slate-800 rounded-2xl font-black py-4 px-8 transition-all duration-500 hover:bg-slate-50 hover:border-slate-300 active:scale-[0.98] shadow-sm;
+}
+
+/* Animations */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes float {
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-10px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes shimmer {
+  from {
+    transform: translateX(-100%);
+  }
+
+  to {
+    transform: translateX(100%);
+  }
+}
+
+.animate-entrance {
+  animation: fadeInUp 0.8s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+/* Custom Scrollbar Premium */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  @apply bg-slate-100;
+}
+
+::-webkit-scrollbar-thumb {
+  @apply bg-slate-300 border-4 border-solid border-slate-100 rounded-full hover:bg-slate-400 transition-colors;
+}
+
+/* Text Pop Overlay for Dark Heroes */
+.text-pop-overlay {
+  @apply absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent pointer-events-none;
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+  -ms-overflow-style: none;
+  /* IE and Edge */
+  scrollbar-width: none;
+  /* Firefox */
+}
+
+/* Video scroll animation */
+@keyframes scroll {
+  0% {
+    transform: translateX(0);
+  }
+
+  100% {
+    transform: translateX(-50%);
+  }
+}
+
+.animate-scroll {
+  animation: scroll 30s linear infinite;
+  width: fit-content;
+}
+
+.animate-scroll:hover {
+  animation-play-state: paused;
+}
