@@ -4,7 +4,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import axios from "axios";
 import {
     Calendar as CalendarIcon, Clock, CheckCircle2, Circle, AlertTriangle,
-    MapPin, Droplets, ThermometerSun,
+    MapPin, Droplets, ThermometerSun, Sprout,
     Activity, LayoutDashboard, Cloud, Leaf, Beaker, Bug, Briefcase, LogOut, User, Search, Bell, ArrowRight
 } from "lucide-react";
 import Logo from "../components/Logo";

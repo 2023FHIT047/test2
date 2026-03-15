@@ -3,9 +3,8 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
     User, MapPin, Phone, Briefcase, Power,
-    CheckCircle2, Clock, Map, PhoneCall, LogOut, Loader2, RefreshCcw,
-    DollarSign, Calendar, TrendingUp, Star, MessageSquare, Bell,
-    Search, Filter, Eye, Settings, Award, Wrench, Sprout, Cloud
+    CheckCircle2, Clock, Map, PhoneCall, LogOut, Loader2,
+    DollarSign, Calendar, Star, Wrench, Sprout, Cloud
 } from "lucide-react";
 import axios from "axios";
 
@@ -14,11 +13,11 @@ const LaborDashboard = () => {
     const [profile, setProfile] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [isUpdating, setIsUpdating] = useState(false);
-    const [error, setError] = useState("");
     const [activeTab, setActiveTab] = useState("jobs");
     const [availableJobs, setAvailableJobs] = useState<any[]>([]);
     const [myApplications, setMyApplications] = useState<any[]>([]);
     const [weatherData, setWeatherData] = useState<any>(null);
+    const [error, setError] = useState<string>("");
 
     const fetchProfile = async () => {
         setIsLoading(true);

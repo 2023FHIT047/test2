@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Eye, EyeOff, CheckCircle2, AlertCircle, User, Phone, MapPin, Briefcase, ChevronRight, Lock } from "lucide-react";
+import { CheckCircle2, AlertCircle, User, Phone, MapPin, Briefcase, ChevronRight, Lock } from "lucide-react";
 import Logo from "../components/Logo";
 import axios from "axios";
 

@@ -3,7 +3,7 @@ import { useState, useEffect } from "react";
 import { useParams, Link } from "react-router-dom";
 import {
     ArrowLeft, Phone, MapPin, Briefcase, User,
-    CheckCircle2, Star, Calendar, ShieldCheck, Mail, MessageSquare, Loader2, LayoutDashboard, Cloud, Activity, AlertTriangle, Leaf, Bug, Beaker, Droplets
+    Star, Calendar, ShieldCheck, MessageSquare, Loader2, LayoutDashboard, Cloud, Activity, AlertTriangle, Leaf, Bug, Beaker, Droplets
 } from "lucide-react";
 import axios from "axios";
 
@@ -104,8 +104,8 @@ const LaborProfileDetail = () => {
                                     <div className="flex flex-col md:flex-row items-center gap-4 mb-4">
                                         <h1 className="text-4xl font-black text-slate-900 tracking-tighter uppercase">{labor.name}</h1>
                                         <div className={`px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-widest border ${labor.availability === 'available'
-                                                ? 'bg-nature-50 text-nature-600 border-nature-200'
-                                                : 'bg-amber-50 text-amber-600 border-amber-200'
+                                            ? 'bg-nature-50 text-nature-600 border-nature-200'
+                                            : 'bg-amber-50 text-amber-600 border-amber-200'
                                             }`}>
                                             STATUS: {labor.availability}
                                         </div>

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { useLanguage } from "../context/LanguageContext";
 import {
-    LayoutDashboard, Cloud, Activity, AlertTriangle, Leaf, Bug, ShieldAlert, ArrowRight, Beaker, Droplets, Briefcase, MapPin
+    LayoutDashboard, Cloud, Activity, AlertTriangle, Leaf, Bug, ShieldAlert, ArrowRight, Beaker, Droplets, Briefcase
 } from "lucide-react";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
@@ -118,25 +118,22 @@ const RiskAnalytics = () => {
                                     animate={{ opacity: 1, y: 0 }}
                                     exit={{ opacity: 0, scale: 0.95 }}
                                     transition={{ delay: idx * 0.1 }}
-                                    className={`modern-card p-6 border-l-4 group hover:scale-[1.02] transition-all ${
-                                        alert.severity === 'red' ? 'border-l-red-600 bg-red-50/30' : 
-                                        alert.severity === 'yellow' ? 'border-l-amber-500 bg-amber-50/30' : 
-                                        'border-l-nature-500 bg-nature-50/30'
-                                    }`}
+                                    className={`modern-card p-6 border-l-4 group hover:scale-[1.02] transition-all ${alert.severity === 'red' ? 'border-l-red-600 bg-red-50/30' :
+                                            alert.severity === 'yellow' ? 'border-l-amber-500 bg-amber-50/30' :
+                                                'border-l-nature-500 bg-nature-50/30'
+                                        }`}
                                 >
                                     <div className="flex items-start justify-between mb-4">
-                                        <div className={`p-3 rounded-xl ${
-                                            alert.severity === 'red' ? 'bg-red-100 text-red-600' : 
-                                            alert.severity === 'yellow' ? 'bg-amber-100 text-amber-600' : 
-                                            'bg-nature-100 text-nature-600'
-                                        }`}>
+                                        <div className={`p-3 rounded-xl ${alert.severity === 'red' ? 'bg-red-100 text-red-600' :
+                                                alert.severity === 'yellow' ? 'bg-amber-100 text-amber-600' :
+                                                    'bg-nature-100 text-nature-600'
+                                            }`}>
                                             <AlertTriangle className="w-5 h-5" />
                                         </div>
-                                        <span className={`text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest ${
-                                            alert.severity === 'red' ? 'bg-red-600 text-white' : 
-                                            alert.severity === 'yellow' ? 'bg-amber-500 text-white' : 
-                                            'bg-nature-500 text-white'
-                                        }`}>
+                                        <span className={`text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest ${alert.severity === 'red' ? 'bg-red-600 text-white' :
+                                                alert.severity === 'yellow' ? 'bg-amber-500 text-white' :
+                                                    'bg-nature-500 text-white'
+                                            }`}>
                                             {t(`alerts.severity.${alert.severity === 'red' ? 'severe' : alert.severity === 'yellow' ? 'moderate' : 'safe'}`)}
                                         </span>
                                     </div>
