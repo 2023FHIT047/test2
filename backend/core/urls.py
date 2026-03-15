@@ -1,7 +1,7 @@
 from django.contrib import admin
 from django.urls import path, include
 from authentication.views import RegisterView, ProfileView, CustomTokenObtainPairView, SaveFarmLocationView, CoordinatorListView, CoordinatorCreateView, FarmerListAdminView, CoordinatorFarmersView, CoordinatorSendAlertView
-from crop.views import CropAnalyticsView
+from crop.views import CropAnalyticsView, CropSummaryView, CropReportDownloadView
 from risk.views import RiskAnalysisView
 from rest_framework_simplejwt.views import TokenRefreshView
 from satellite.views import SatelliteCropHealthView
@@ -15,6 +15,8 @@ urlpatterns = [
     path('api/save-farm-location/', SaveFarmLocationView.as_view(), name='save_farm_location'),
     path('api/weather/', include('weather.urls')),
     path('api/crop/analytics', CropAnalyticsView.as_view(), name='crop_analytics'),
+    path('api/crop/summary', CropSummaryView.as_view(), name='crop_summary'),
+    path('api/crop-report', CropReportDownloadView.as_view(), name='crop_report_download'),
     path('api/risk/analysis', RiskAnalysisView.as_view(), name='risk_analysis'),
     path('api/irrigation/', include('irrigation.urls')),
     path('api/disease/', include('disease.urls')),

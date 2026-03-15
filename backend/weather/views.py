@@ -341,7 +341,8 @@ class FarmWeatherForecastView(APIView):
             hourly_trend.append({
                 "time": time.strftime("%H:00"),
                 "temp": round(current_hourly_temp, 1),
-                "rain_prob": random.randint(0, max_rain_prob)
+                "rain_prob": random.randint(0, max_rain_prob),
+                "wind_speed": round(random.uniform(5.0, 20.0), 1)
             })
 
         # Advanced Agronomic Metrics
@@ -377,3 +378,85 @@ class FarmWeatherForecastView(APIView):
         }
         
         return Response(data, status=status.HTTP_200_OK)
+
+class DisasterAlertView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        user = request.user
+        
+        if user.latitude is None or user.longitude is None:
+            return Response([], status=status.HTTP_200_OK)
+            
+        # Get weather data to base alerts on
+        # In a real app, we'd fetch actual API data here
+        now = datetime.now()
+        month = now.month
+        
+        # We reuse some logic from FarmWeatherForecastView to stay consistent
+        if month in [3, 4, 5, 6]: # Summer
+            base_temp = random.uniform(35.0, 45.0)
+            rain_chance = random.randint(0, 20)
+        elif month in [7, 8, 9]: # Monsoon
+            base_temp = random.uniform(25.0, 32.0)
+            rain_chance = random.randint(50, 100)
+        else:
+            base_temp = random.uniform(15.0, 30.0)
+            rain_chance = random.randint(0, 40)
+            
+        alerts = []
+        
+        # Heavy Rainfall Alert
+        if rain_chance > 80:
+            alerts.append({
+                "type": "Heavy Rainfall",
+                "severity": "red" if rain_chance > 90 else "yellow",
+                "icon": "cloud-rain",
+                "message": "heavy_rain_warning",
+                "action": "protect_crops_drainage"
+            })
+            
+        # Flood Risk (in Monsoon with very high rain chance)
+        if rain_chance > 92 and month in [7, 8, 9]:
+            alerts.append({
+                "type": "Flood Risk",
+                "severity": "red",
+                "icon": "droplets",
+                "message": "flood_warning",
+                "action": "move_livestock_drainage"
+            })
+            
+        # Heatwave Alert
+        if base_temp > 40:
+            alerts.append({
+                "type": "Heatwave",
+                "severity": "red" if base_temp > 43 else "yellow",
+                "icon": "sun",
+                "message": "heatwave_warning",
+                "action": "increase_irrigation_shade"
+            })
+            
+        # Drought Risk (Low rain for a long time)
+        # For demo, if it's summer and rain chance is very low
+        if rain_chance < 5 and month in [3, 4, 5]:
+            alerts.append({
+                "type": "Drought Risk",
+                "severity": "yellow",
+                "icon": "thermometer-sun",
+                "message": "drought_warning",
+                "action": "conserve_water_mulching"
+            })
+
+        # If no disasters, maybe one low-level info alert or empty list
+        if not alerts:
+            # Random chance to show a green "Safe" alert for demo
+            if random.random() > 0.5:
+                alerts.append({
+                    "type": "Optimal Conditions",
+                    "severity": "green",
+                    "icon": "check-circle",
+                    "message": "optimal_weather",
+                    "action": "proceed_with_activities"
+                })
+
+        return Response(alerts, status=status.HTTP_200_OK)

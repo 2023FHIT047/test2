@@ -1,8 +1,8 @@
 import { useState, useRef, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Mic, X, MicOff, Globe, Send } from "lucide-react";
+import { useLanguage, type Language } from "../context/LanguageContext";
 
-const languages = ["English", "हिंदी", "मराठी", "తెలుగు", "ਪੰਜਾਬੀ"];
 
 const sampleQA = [
     {
@@ -40,11 +40,13 @@ const sampleQA = [
     },
 ];
 
-const VoiceAssistantWidget = ({ weatherData, user }: { weatherData: any, user: any }) => {
+const VoiceAssistantWidget = ({ weatherData }: { weatherData: any, user?: any }) => {
+    const { t, language, setLanguage } = useLanguage();
     const [open, setOpen] = useState(false);
     const [listening, setListening] = useState(false);
     const [activeQ, setActiveQ] = useState<any>(null);
-    const [lang, setLang] = useState("English");
+    const langMap = { "en": "English", "hi": "हिंदी", "mr": "मराठी" };
+    const lang = langMap[language as keyof typeof langMap] || "English";
     const [textInput, setTextInput] = useState("");
     const scrollRef = useRef<HTMLDivElement>(null);
 
@@ -185,8 +187,8 @@ const VoiceAssistantWidget = ({ weatherData, user }: { weatherData: any, user: a
                                     <Mic className="text-white w-4 h-4" />
                                 </div>
                                 <div>
-                                    <p className="font-black text-slate-800 text-sm">AI Voice Assistant</p>
-                                    <p className="text-xs text-nature-600 font-semibold">Multilingual · Farmer First</p>
+                                    <p className="font-black text-slate-800 text-sm">{t('voice.title')}</p>
+                                    <p className="text-xs text-nature-600 font-semibold">{t('voice.subtitle')}</p>
                                 </div>
                             </div>
                             <button onClick={() => setOpen(false)} className="text-slate-400 hover:text-slate-700">
@@ -198,11 +200,13 @@ const VoiceAssistantWidget = ({ weatherData, user }: { weatherData: any, user: a
                         <div className="flex items-center gap-2 mb-4">
                             <Globe className="w-4 h-4 text-slate-400 shrink-0" />
                             <select
-                                value={lang}
-                                onChange={e => setLang(e.target.value)}
+                                value={language}
+                                onChange={e => setLanguage(e.target.value as Language)}
                                 className="text-xs font-bold text-slate-700 bg-slate-50 border border-slate-200 rounded-lg px-2 py-1.5 outline-none w-full"
                             >
-                                {languages.map(l => <option key={l}>{l}</option>)}
+                                <option value="en">English</option>
+                                <option value="hi">हिंदी</option>
+                                <option value="mr">मराठी</option>
                             </select>
                         </div>
 
@@ -229,7 +233,7 @@ const VoiceAssistantWidget = ({ weatherData, user }: { weatherData: any, user: a
                             )}
 
                             <p className="text-xs text-slate-400 font-medium mt-2">
-                                {listening ? "Listening..." : "Ask your farm expert"}
+                                {listening ? t('voice.listening') : t('voice.expert_prompt')}
                             </p>
                         </div>
 
@@ -240,7 +244,7 @@ const VoiceAssistantWidget = ({ weatherData, user }: { weatherData: any, user: a
                                 value={textInput}
                                 onChange={e => setTextInput(e.target.value)}
                                 onKeyDown={e => e.key === 'Enter' && handleSend()}
-                                placeholder="Type your question..."
+                                placeholder={t('voice.placeholder')}
                                 className="bg-transparent border-none outline-none text-xs text-slate-700 w-full py-1.5 px-2 placeholder:text-slate-400"
                             />
                             <button 

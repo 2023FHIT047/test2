@@ -5,21 +5,25 @@ import axios from "axios";
 import {
     Droplets, Sprout, Sun, AlertTriangle, Activity, MapPin, Search, ChevronRight, LogOut, LayoutDashboard, Cloud, Bell, User, CloudRain,
     Bug, Wheat, Cpu, Leaf, ShieldCheck, ThermometerSun, Settings, ArrowRight, Wind, Calendar as CalendarIcon, Navigation, Beaker, Briefcase, Users, Clock,
-    Satellite, Info as InfoIcon
+    Satellite, Info as InfoIcon, X
 } from "lucide-react";
 
 import VoiceAssistantWidget from '../components/VoiceAssistantWidget';
 import FarmWeatherForecast from '../components/FarmWeatherForecast';
-import InteractiveWeatherMap from '../components/InteractiveWeatherMap';
 import SmartIrrigationCard from '../components/SmartIrrigationCard';
 import SatelliteMonitoringPanel from '../components/SatelliteMonitoringPanel';
+import LogoIcon from '../components/Logo';
+
+import { useLanguage } from "../context/LanguageContext";
 
 const Dashboard = () => {
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [user, setUser] = useState<any>(null);
     const [isLoading, setIsLoading] = useState(true);
     const [weatherData, setWeatherData] = useState<any>(null);
     const [notifications, setNotifications] = useState<any[]>([]);
+    const [disasterAlerts, setDisasterAlerts] = useState<any[]>([]);
     const [showNotifications, setShowNotifications] = useState(false);
 
     useEffect(() => {
@@ -69,6 +73,17 @@ const Dashboard = () => {
                     console.error("Notifications fetch failed", nErr);
                 }
 
+                // Fetch Disaster Alerts
+                try {
+                    const disasterRes = await axios.get('http://localhost:8000/api/weather/disaster-alerts/', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    });
+                    setDisasterAlerts(disasterRes.data);
+                } catch (dErr) {
+                    console.error("Disaster alerts fetch failed", dErr);
+                }
+
+
             } catch (err) {
                 console.error(err);
                 localStorage.removeItem("token");
@@ -91,7 +106,7 @@ const Dashboard = () => {
             <div className="min-h-screen bg-slate-50 flex items-center justify-center">
                 <div className="flex flex-col items-center gap-4">
                     <div className="w-12 h-12 border-4 border-nature-600 border-t-transparent rounded-full animate-spin" />
-                    <p className="text-slate-600 font-bold">Calibrating Farm Sensors...</p>
+                    <p className="text-slate-600 font-bold">{t('dashboard.calibrating')}</p>
                 </div>
             </div>
         );
@@ -104,16 +119,16 @@ const Dashboard = () => {
                 <div className="max-w-[1600px] mx-auto px-6 h-full flex items-center justify-between">
                     <div className="flex items-center gap-4 group">
                         <div className="w-12 h-12 bg-nature-700 rounded-2xl flex items-center justify-center shadow-2xl shadow-nature-700/20 group-hover:scale-110 transition-transform duration-500">
-                            <Sprout className="text-white w-7 h-7" />
+                            <LogoIcon size={28} />
                         </div>
-                        <span className="text-2xl font-black tracking-tighter text-slate-900 hidden sm:block">AgroCast</span>
+                        <span className="text-2xl font-black tracking-tighter text-slate-900 hidden sm:block">KrushiSarthi</span>
                     </div>
 
                     <div className="hidden md:flex items-center gap-2 bg-white/40 backdrop-blur-md border border-white/60 shadow-inner rounded-2xl px-5 py-2.5 w-[500px] transition-all focus-within:ring-8 focus-within:ring-nature-500/5 focus-within:bg-white/60">
                         <Search className="w-4 h-4 text-slate-400" />
                         <input
                             type="text"
-                            placeholder="Search insights, locations, metrics..."
+                            placeholder={t('dashboard.search')}
                             className="bg-transparent border-none outline-none text-sm text-slate-800 w-full placeholder:text-slate-400 font-bold"
                         />
                     </div>
@@ -139,18 +154,46 @@ const Dashboard = () => {
                             className="relative w-12 h-12 flex items-center justify-center text-slate-500 hover:text-slate-900 hover:bg-white/40 rounded-xl transition-all"
                         >
                             <Bell className="w-6 h-6" />
-                            {notifications.length > 0 && (
-                                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white px-1">{notifications.length}</span>
+                            {(notifications.length + disasterAlerts.length) > 0 && (
+                                <span className="absolute -top-1 -right-1 min-w-[18px] h-[18px] bg-red-500 rounded-full flex items-center justify-center text-[10px] font-bold text-white px-1">
+                                    {notifications.length + disasterAlerts.length}
+                                </span>
                             )}
                         </button>
 
                         <div className="flex items-center gap-3 pl-4 border-l border-slate-200">
+                            {/* Crop Selector */}
+                            <div className="mr-4">
+                                <select
+                                    value={user?.crop_type || "Rice"}
+                                    onChange={async (e) => {
+                                        const newCrop = e.target.value;
+                                        try {
+                                            const token = localStorage.getItem("token");
+                                            await axios.patch("http://localhost:8000/api/profile", { crop_type: newCrop }, {
+                                                headers: { Authorization: `Bearer ${token}` }
+                                            });
+                                            setUser({ ...user, crop_type: newCrop });
+                                        } catch (err) {
+                                            console.error("Failed to update crop type", err);
+                                        }
+                                    }}
+                                    className="bg-nature-50 border border-nature-200 rounded-xl px-3 py-1.5 text-[10px] font-black text-nature-700 uppercase tracking-widest outline-none cursor-pointer focus:ring-2 focus:ring-nature-500/20"
+                                >
+                                    <option value="Rice">{t('dashboard.crops.rice')}</option>
+                                    <option value="Wheat">{t('dashboard.crops.wheat')}</option>
+                                    <option value="Cotton">{t('dashboard.crops.cotton')}</option>
+                                    <option value="Soybean">{t('dashboard.crops.soybean')}</option>
+                                    <option value="Maize">{t('dashboard.crops.maize')}</option>
+                                </select>
+                            </div>
+
                             <div className="flex items-center gap-3 mr-2">
                                 <button
                                     onClick={() => navigate('/setup-location')}
                                     className="flex items-center gap-2 px-3 py-1.5 bg-nature-50 border border-nature-200 rounded-xl text-[10px] font-black text-nature-700 uppercase tracking-widest hover:bg-nature-100 transition-all"
                                 >
-                                    <Navigation className="w-3 h-3" /> Locate Farm
+                                    <Navigation className="w-3 h-3" /> {t('dashboard.locate_farm')}
                                 </button>
                             </div>
                             <div className="text-right hidden lg:block">
@@ -164,6 +207,7 @@ const Dashboard = () => {
                             </div>
                         </div>
 
+
                         <button onClick={handleLogout} className="text-slate-400 hover:text-red-500 transition-colors p-3">
                             <LogOut className="w-5 h-5" />
                         </button>
@@ -176,17 +220,17 @@ const Dashboard = () => {
 
                 {/* Fixed Left Sidebar Navigation */}
                 <aside className="fixed w-20 xl:w-72 h-screen pt-24 pb-24 px-5 flex flex-col gap-2 border-r border-slate-200 bg-white/40 backdrop-blur-2xl hidden md:flex z-40 overflow-y-auto no-scrollbar">
-                    <SidebarItem icon={<LayoutDashboard />} label="Dashboard" active />
-                    <Link to="/forecast-models"><SidebarItem icon={<Cloud />} label="Forecast Models" /></Link>
-                    <Link to="/farming-calendar"><SidebarItem icon={<Calendar />} label="AI Farming Calendar" /></Link>
-                    <Link to="/crop-analytics"><SidebarItem icon={<Activity />} label="Crop Analytics" /></Link>
-                    <Link to="/risk-analytics"><SidebarItem icon={<AlertTriangle />} label="Risk Center" /></Link>
+                    <SidebarItem icon={<LayoutDashboard />} label={t('dashboard.sidebar.dashboard')} active />
+                    <Link to="/forecast-models"><SidebarItem icon={<Cloud />} label={t('dashboard.sidebar.forecast')} /></Link>
+                    <Link to="/farming-calendar"><SidebarItem icon={<CalendarIcon />} label={t('dashboard.sidebar.calendar')} /></Link>
+                    <Link to="/crop-analytics"><SidebarItem icon={<Activity />} label={t('dashboard.sidebar.analytics')} /></Link>
+                    <Link to="/risk-analytics"><SidebarItem icon={<AlertTriangle />} label={t('dashboard.sidebar.risk')} /></Link>
                     <div className="h-px bg-slate-200/50 my-6 mx-4" />
-                    <Link to="/crop-advisory"><SidebarItem icon={<Leaf />} label="Crop Advisory" /></Link>
-                    <Link to="/dashboard"><SidebarItem icon={<Droplets />} label="Smart Irrigation" /></Link>
-                    <Link to="/disease-detection"><SidebarItem icon={<Beaker />} label="Crop Disease Detection" /></Link>
-                    <Link to="/pest-detection"><SidebarItem icon={<Bug />} label="Pest Detection" /></Link>
-                    <Link to="/find-labor"><SidebarItem icon={<Briefcase />} label="Find Labor" /></Link>
+                    <Link to="/crop-advisory"><SidebarItem icon={<Leaf />} label={t('dashboard.sidebar.advisory')} /></Link>
+                    <Link to="/dashboard"><SidebarItem icon={<Droplets />} label={t('dashboard.sidebar.irrigation')} /></Link>
+                    <Link to="/disease-detection"><SidebarItem icon={<Beaker />} label={t('dashboard.sidebar.disease')} /></Link>
+                    <Link to="/pest-detection"><SidebarItem icon={<Bug />} label={t('dashboard.sidebar.pests')} /></Link>
+                    <Link to="/find-labor"><SidebarItem icon={<Briefcase />} label={t('dashboard.sidebar.labor')} /></Link>
 
                     <div className="mt-auto flex flex-col gap-4">
                         {/* Farm Configuration Sidebar Card */}
@@ -194,20 +238,20 @@ const Dashboard = () => {
                             <div className="bg-nature-950 text-white rounded-[2rem] p-6 hidden xl:block shadow-2xl relative overflow-hidden group">
                                 <div className="absolute top-0 right-0 w-32 h-32 bg-nature-500/10 rounded-full blur-3xl -mr-16 -mt-16 group-hover:bg-nature-500/20 transition-all"></div>
                                 <h4 className="text-[10px] font-black uppercase tracking-widest text-nature-500 mb-4 flex items-center justify-between">
-                                    Farm Identity <Settings className="w-3 h-3 opacity-50" />
+                                    {t('dashboard.farm_identity')} <Settings className="w-3 h-3 opacity-50" />
                                 </h4>
                                 <div className="space-y-4">
                                     <div>
-                                        <p className="text-[10px] font-black text-white/40 mb-1">CROP VARIETY</p>
-                                        <p className="text-sm font-black truncate text-white">{user.crop_type} <span className="text-nature-500 opacity-60">({user.crop_variety || 'General'})</span></p>
+                                        <p className="text-[10px] font-black text-white/40 mb-1">{t('dashboard.crop_variety')}</p>
+                                        <p className="text-sm font-black truncate text-white">{t(`dashboard.crops.${user.crop_type?.toLowerCase() || 'rice'}`)} <span className="text-nature-500 opacity-60">({user.crop_variety || 'General'})</span></p>
                                     </div>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <p className="text-[10px] font-black text-white/40 mb-1">SOIL</p>
+                                            <p className="text-[10px] font-black text-white/40 mb-1">{t('dashboard.soil')}</p>
                                             <p className="text-xs font-black">{user.soil_type}</p>
                                         </div>
                                         <div>
-                                            <p className="text-[10px] font-black text-white/40 mb-1">SYSTEM</p>
+                                            <p className="text-[10px] font-black text-white/40 mb-1">{t('dashboard.system')}</p>
                                             <p className="text-xs font-black">{user.irrigation_type}</p>
                                         </div>
                                     </div>
@@ -215,7 +259,7 @@ const Dashboard = () => {
                                         onClick={() => navigate("/onboarding")}
                                         className="w-full mt-2 py-3 bg-white/10 hover:bg-white/20 rounded-xl text-[10px] font-black transition-all flex items-center justify-center gap-2 border border-white/10 backdrop-blur-sm"
                                     >
-                                        Edit Profile <ArrowRight className="w-3 h-3" />
+                                        {t('dashboard.edit_profile')} <ArrowRight className="w-3 h-3" />
                                     </button>
                                 </div>
                             </div>
@@ -223,17 +267,51 @@ const Dashboard = () => {
 
                         <div className="glass-card p-6 hidden xl:block relative overflow-hidden group border-slate-200/50">
                             <div className="absolute top-0 right-0 w-24 h-24 bg-nature-400/10 rounded-full blur-2xl"></div>
-                            <Sprout className="w-10 h-10 text-nature-600 mb-4 group-hover:scale-110 transition-transform duration-500" />
-                            <h4 className="text-sm font-black text-slate-900 mb-1">Upgrade to Pro</h4>
-                            <p className="text-xs text-slate-500 font-bold mb-5 leading-relaxed">Satellite imagery and AI predictive modeling.</p>
+                            <LogoIcon className="w-10 h-10 text-nature-600 mb-4 group-hover:scale-110 transition-transform duration-500" />
+                            <h4 className="text-sm font-black text-slate-900 mb-1">{t('dashboard.upgrade')}</h4>
+                            <p className="text-xs text-slate-500 font-bold mb-5 leading-relaxed">{t('dashboard.upgrade_desc')}</p>
                             <button className="btn-primary !w-full !py-3 !text-[10px]">
-                                View Plans
+                                {t('dashboard.view_plans')}
                             </button>
                         </div>
                     </div>
                 </aside>
 
                 <main className="flex-1 ml-0 md:ml-20 xl:ml-72 min-h-screen pt-12 px-10 pb-20">
+                    {/* Disaster Alert Banner */}
+                    <AnimatePresence>
+                        {disasterAlerts.filter(a => a.severity === 'red').map((alert, idx) => (
+                            <motion.div
+                                key={`${alert.type}-${idx}`}
+                                initial={{ opacity: 0, height: 0, y: -20 }}
+                                animate={{ opacity: 1, height: 'auto', y: 0 }}
+                                exit={{ opacity: 0, height: 0, y: -20 }}
+                                className="mb-6 overflow-hidden"
+                            >
+                                <div className="bg-red-600 text-white p-4 rounded-2xl shadow-lg shadow-red-600/20 flex flex-col md:flex-row items-center justify-between gap-4 border-2 border-red-500/50 animate-pulse-slow">
+                                    <div className="flex items-center gap-4">
+                                        <div className="w-12 h-12 bg-white/20 rounded-xl flex items-center justify-center shrink-0">
+                                            <AlertTriangle className="w-6 h-6 text-white" />
+                                        </div>
+                                        <div>
+                                            <h4 className="font-black text-sm uppercase tracking-widest">{alert.type} - {t('alerts.severity.severe')}</h4>
+                                            <p className="text-sm font-bold opacity-90">{t(`alerts.${alert.message}`)}</p>
+                                        </div>
+                                    </div>
+                                    <div className="flex items-center gap-3">
+                                        <div className="hidden md:block text-right mr-2">
+                                            <p className="text-[10px] font-black uppercase opacity-60 tracking-widest">{t('alerts.title')}</p>
+                                            <p className="text-xs font-black">{t(`alerts.actions.${alert.action}`)}</p>
+                                        </div>
+                                        <Link to="/risk-analytics" className="px-5 py-2.5 bg-white text-red-600 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-slate-50 transition-all">
+                                            {t('dashboard.action_plan')}
+                                        </Link>
+                                    </div>
+                                </div>
+                            </motion.div>
+                        ))}
+                    </AnimatePresence>
+
                     <AnimatePresence>
                         {showNotifications && (
                             <motion.div
@@ -249,13 +327,24 @@ const Dashboard = () => {
                                 >
                                     <div className="flex items-center justify-between mb-6 pb-4 border-b border-slate-700">
                                         <h3 className="font-bold text-white text-lg flex items-center gap-2">
-                                            <Bell className="w-5 h-5 text-amber-400" /> Notifications
+                                            <Bell className="w-5 h-5 text-amber-400" /> {t('dashboard.notifications_title')}
                                         </h3>
                                         <button onClick={() => setShowNotifications(false)} className="text-slate-400 hover:text-white transition-colors">
-                                            <XCircleIcon className="w-5 h-5" />
+                                            <X className="w-5 h-5" />
                                         </button>
+
                                     </div>
-                                    <div className="space-y-4 max-h-64 overflow-y-auto no-scrollbar">
+                                    <div className="space-y-4 max-h-[60vh] overflow-y-auto no-scrollbar pr-2">
+                                        {disasterAlerts.length > 0 && disasterAlerts.map((alert, idx) => (
+                                            <div key={`alert-${idx}`} className={`p-4 rounded-xl border-l-4 ${alert.severity === 'red' ? 'bg-red-500/10 border-red-500' : 'bg-amber-500/10 border-amber-500'}`}>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <AlertTriangle className={`w-4 h-4 ${alert.severity === 'red' ? 'text-red-400' : 'text-amber-400'}`} />
+                                                    <span className="text-[10px] font-black uppercase tracking-widest text-white/40">{alert.type}</span>
+                                                </div>
+                                                <p className="text-sm font-bold text-white mb-2">{t(`alerts.${alert.message}`)}</p>
+                                                <p className="text-[10px] font-black text-white/20 uppercase tracking-widest leading-none">{t(`alerts.actions.${alert.action}`)}</p>
+                                            </div>
+                                        ))}
                                         {notifications.length > 0 ? notifications.map((n, i) => (
                                             <div key={i} className="p-4 bg-gradient-to-r from-slate-800 to-slate-900 border border-slate-700 rounded-xl hover:from-slate-700 hover:to-slate-800 transition-all cursor-pointer shadow-lg">
                                                 <div className="flex items-start justify-between mb-2">
@@ -283,10 +372,10 @@ const Dashboard = () => {
                                 animate={{ opacity: 1, x: 0 }}
                                 className="text-4xl font-black text-slate-900 tracking-tight"
                             >
-                                Farm Overview
+                                {t('dashboard.farm_overview')}
                             </motion.h2>
                             <p className="text-slate-500 mt-2 font-bold text-lg">
-                                Real-time intelligence for <span className="text-nature-600">Optimal Yield</span>
+                                {t('dashboard.real_time')} <span className="text-nature-600">{t('dashboard.optimal_yield')}</span>
                             </p>
                         </div>
                     </header>
@@ -320,10 +409,10 @@ const Dashboard = () => {
                                 </div>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
                                     {[
-                                        { icon: <Droplets />, label: "HUMIDITY", value: `${weatherData?.current?.humidity || "--"}%` },
-                                        { icon: <Wind />, label: "WIND SPEED", value: `${weatherData?.current?.wind_speed || "--"} km/h` },
-                                        { icon: <Sun />, label: "UV INDEX", value: "8.4" },
-                                        { icon: <CloudRain />, label: "RAIN PROB", value: `${weatherData?.current?.rain_chance || "--"}%` },
+                                        { icon: <Droplets />, label: t('dashboard.humidity'), value: `${weatherData?.current?.humidity || "--"}%` },
+                                        { icon: <Wind />, label: t('dashboard.wind_speed'), value: `${weatherData?.current?.wind_speed || "--"} km/h` },
+                                        { icon: <Sun />, label: t('dashboard.uv_index'), value: "8.4" },
+                                        { icon: <CloudRain />, label: t('dashboard.rain_prob'), value: `${weatherData?.current?.rain_chance || "--"}%` },
                                     ].map((stat, i) => (
                                         <div key={i} className="flex flex-col gap-1.5">
                                             <div className="text-nature-500 w-4 h-4">{stat.icon}</div>
@@ -340,13 +429,13 @@ const Dashboard = () => {
                         <div className="lg:col-span-2 space-y-8">
                             <div className="space-y-4">
                                 <h3 className="text-xs font-black text-slate-400 uppercase tracking-[0.2em] mb-4 flex items-center gap-2">
-                                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" /> Real-time Risk Engine
+                                    <div className="w-1.5 h-1.5 bg-red-500 rounded-full animate-ping" /> {t('dashboard.risk_engine')}
                                 </h3>
                                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {weatherData?.current.temperature > 35 && (
-                                        <AlertCard severity="high" icon={<ThermometerSun />} title="Heatwave Warning" details={`Temps reached ${weatherData.current.temperature}°C. Critical for ${user?.crop_type}.`} />
+                                        <AlertCard severity="high" icon={<ThermometerSun />} title={t('dashboard.heatwave_warning')} details={t('dashboard.heatwave_details', { temp: weatherData.current.temperature, crop: t(`dashboard.crops.${user?.crop_type?.toLowerCase() || 'rice'}`) })} />
                                     )}
-                                    <AlertCard severity="medium" icon={<Bug />} title="Fungal Proliferation" details="High humidity detected. Inspect crops for early signs of blight." />
+                                    <AlertCard severity="medium" icon={<Bug />} title={t('dashboard.fungal_warning')} details={t('dashboard.fungal_details')} />
                                 </div>
                             </div>
                             <SmartIrrigationCard />
@@ -358,14 +447,14 @@ const Dashboard = () => {
                                 <div className="absolute top-0 right-0 w-64 h-64 bg-emerald-500/5 rounded-full blur-3xl -mr-32 -mt-32"></div>
                                 <div className="flex items-center justify-between mb-8 relative z-10">
                                     <h2 className="text-3xl font-black text-slate-900 flex items-center gap-3">
-                                        <Satellite className="text-emerald-600 w-8 h-8" /> 
-                                        Satellite Crop Monitoring
+                                        <Satellite className="text-emerald-600 w-8 h-8" />
+                                        {t('dashboard.satellite_title')}
                                     </h2>
                                     <div className="flex items-center gap-2 px-4 py-2 bg-emerald-50 text-emerald-700 rounded-2xl text-[10px] font-black uppercase tracking-widest border border-emerald-100 shadow-sm">
-                                        <InfoIcon className="w-4 h-4" /> Multi-Spectral Intel
+                                        <InfoIcon className="w-4 h-4" /> {t('dashboard.multi_spectral_intel')}
                                     </div>
                                 </div>
-                                <SatelliteMonitoringPanel />
+                                <SatelliteMonitoringPanel key={user?.crop_type || 'default'} />
                             </section>
                         </div>
                     </div>
@@ -412,7 +501,7 @@ const Dashboard = () => {
                     </section>
 
 
-                    <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
+                    <section className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8 mt-8">
                         {/* AI Crop Risk */}
                         <Link to="/crop-advisory" className="glass-card p-6 hover:-translate-y-2 transition-all cursor-pointer group relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-20 h-20 bg-red-500/5 rounded-full -mr-10 -mt-10 group-hover:bg-red-500/10 transition-colors"></div>
@@ -630,14 +719,14 @@ const Dashboard = () => {
                                 </div>
                                 <h3 className="text-3xl font-black text-white mb-4 tracking-tight leading-tight">Empowering Every Farm with Artificial Intelligence.</h3>
                                 <p className="text-white/60 font-bold text-sm leading-relaxed">
-                                    AgroCast uses 24+ data layers to simulate your farm's future. Our mission is to democratize high-end climate intelligence for the common farmer.
+                                    KrushiSarthi uses 24+ data layers to simulate your farm's future. Our mission is to democratize high-end climate intelligence for the common farmer.
                                 </p>
                             </div>
                         </div>
                     </section>
 
                     <footer className="pt-10 pb-6 text-center border-t border-slate-200 mt-12 text-slate-500 font-medium">
-                        <p className="text-sm">&copy; 2026 AgroCast Precision Agriculture Platform.</p>
+                        <p className="text-sm">&copy; 2026 KrushiSarthi Precision Agriculture Platform.</p>
                     </footer>
                 </main>
             </div>
@@ -647,10 +736,6 @@ const Dashboard = () => {
 };
 
 // --- Reusable Components for the Dashboard ---
-
-const XCircleIcon = (props: any) => (
-    <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="10" /><path d="m15 9-6 6" /><path d="m9 9 6 6" /></svg>
-);
 
 const SidebarItem = ({ icon, label, active = false }: any) => (
     <button className={`w-full flex items-center xl:justify-start justify-center gap-4 p-4 rounded-2xl transition-all duration-500 group relative ${active
@@ -664,8 +749,6 @@ const SidebarItem = ({ icon, label, active = false }: any) => (
         <span className={`text-sm tracking-tight hidden xl:block ${active ? 'font-black' : 'font-bold'}`}>{label}</span>
     </button>
 );
-
-
 
 const AlertCard = ({ icon, title, details, severity }: any) => (
     <div className={`glass-card p-6 flex items-start gap-4 border-l-8 border-l-nature-500/0 hover:scale-[1.02] transition-all group ${severity === "high" ? "border-l-red-500 bg-red-50" :
@@ -685,43 +768,7 @@ const AlertCard = ({ icon, title, details, severity }: any) => (
             </h4>
             <p className="text-xs text-slate-500 font-bold leading-relaxed">{details}</p>
         </div>
-        <ArrowRight className="w-4 h-4 text-slate-300 group-hover:translate-x-1 transition-transform" />
-    </div>
-);
-
-const ImageMonitoringCard = ({ imageUrl, title, desc, status }: any) => (
-    <div className="glass-card p-4 hover:scale-[1.02] transition-all cursor-pointer group">
-        <div className="relative h-48 rounded-2xl overflow-hidden mb-4">
-            <img src={imageUrl} alt={title} className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" />
-            <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent"></div>
-            <div className="absolute bottom-3 left-3 flex items-center gap-2">
-                <div className={`w-2 h-2 rounded-full ${status === 'LUSH' || status === 'Optimal' ? 'bg-nature-500 shadow-[0_0_8px_rgba(34,197,94,0.6)] animate-pulse' : 'bg-harvest-500'}`}></div>
-                <span className="text-[10px] font-black text-white uppercase tracking-widest">{status}</span>
-            </div>
-        </div>
-        <h4 className="text-sm font-black text-slate-900 mb-1">{title}</h4>
-        <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">{desc}</p>
-    </div>
-);
-
-const ActivityCard = ({ title, time, label, active }: any) => (
-    <div className={`p-6 rounded-2xl transition-all hover:shadow-xl group ${active ? 'bg-white border-2 border-nature-500/20 shadow-nature-500/5' : 'bg-slate-50 border border-slate-200'}`}>
-        <div className="flex justify-between items-start mb-6">
-            <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${active ? 'bg-nature-100 text-nature-600' : 'bg-slate-200 text-slate-500'}`}>
-                <Activity className="w-5 h-5" />
-            </div>
-            {active && (
-                <span className="flex items-center gap-1.5 px-2 py-0.5 bg-nature-100 text-nature-700 rounded-full text-[8px] font-black uppercase tracking-widest animate-pulse">
-                    Active
-                </span>
-            )}
-        </div>
-        <h4 className="text-xs font-black text-slate-900 mb-1">{title}</h4>
-        <p className="text-[10px] font-bold text-slate-500 mb-4">{label}</p>
-        <div className="pt-4 border-t border-slate-100 flex items-center gap-2">
-            <CalendarIcon className="w-3 h-3 text-slate-400" />
-            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest">{time}</span>
-        </div>
+        <ArrowRight className="w-7 h-7 text-slate-300 group-hover:translate-x-1 transition-transform" />
     </div>
 );
 

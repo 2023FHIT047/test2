@@ -1,10 +1,14 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sprout, Eye, EyeOff, LogIn, AlertCircle, Mail, Lock, CheckCircle2 } from "lucide-react";
+import { Eye, EyeOff, LogIn, AlertCircle, Mail, Lock, CheckCircle2 } from "lucide-react";
+import Logo from "../components/Logo";
 import axios from "axios";
+import { useLanguage } from "../context/LanguageContext";
+import { Trans } from 'react-i18next';
 
 const LoginPage = () => {
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
@@ -91,23 +95,25 @@ const LoginPage = () => {
                     >
                         <Link to="/" className="inline-flex items-center gap-4 mb-16">
                             <div className="w-16 h-16 bg-white rounded-3xl flex items-center justify-center shadow-2xl">
-                                <Sprout className="text-nature-600 w-10 h-10" />
+                                <Logo size={40} />
                             </div>
-                            <span className="text-4xl font-black text-white tracking-tighter italic">AgroCast</span>
+                            <span className="text-4xl font-black text-white tracking-tighter italic">KrushiSarthi</span>
                         </Link>
 
                         <h2 className="text-6xl font-black text-white mb-8 leading-[1.1] tracking-tighter">
-                            Empowering The <span className="text-nature-500">Green</span> Revolution.
+                            <Trans i18nKey="auth.empowering_title">
+                                Empowering The <span className="text-nature-500">Green</span> Revolution.
+                            </Trans>
                         </h2>
                         <p className="text-xl text-white/60 font-medium leading-relaxed mb-12">
-                            Join thousands of farmers using real-time data to protect their livelihood and maximize harvest capacity.
+                            {t('auth.empowering_desc')}
                         </p>
 
                         <div className="space-y-6">
                             {[
-                                "Village-level Weather Accuracy",
-                                "AI-Powered Pest Predictions",
-                                "Real-time Climate Risk Alerts"
+                                t('auth.benefit1'),
+                                t('auth.benefit2'),
+                                t('auth.benefit3')
                             ].map((text, i) => (
                                 <motion.div
                                     key={i}
@@ -136,14 +142,14 @@ const LoginPage = () => {
                     {/* Mobile Logo */}
                     <div className="md:hidden flex flex-col items-center mb-12">
                         <Link to="/" className="w-14 h-14 bg-nature-600 rounded-2xl flex items-center justify-center shadow-lg shadow-nature-600/30 mb-4">
-                            <Sprout className="text-white w-8 h-8" />
+                            <Logo size={32} />
                         </Link>
-                        <h1 className="text-3xl font-black text-slate-800 italic">AgroCast</h1>
+                        <h1 className="text-3xl font-black text-slate-800 italic">KrushiSarthi</h1>
                     </div>
 
                     <div className="mb-10 text-center md:text-left">
-                        <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Welcome Back</h2>
-                        <p className="text-slate-500 font-bold text-lg leading-relaxed">Access your professional farm monitoring cockpit.</p>
+                        <h2 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">{t('auth.login_title')}</h2>
+                        <p className="text-slate-500 font-bold text-lg leading-relaxed">{t('auth.login_subtitle')}</p>
                     </div>
 
                     <motion.div
@@ -164,7 +170,7 @@ const LoginPage = () => {
 
                         <form onSubmit={handleSubmit} className="space-y-8">
                             <div>
-                                <label className="label-text">Professional Email</label>
+                                <label className="label-text">{t('auth.email_label')}</label>
                                 <div className="relative group">
                                     <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
                                     <input
@@ -177,8 +183,8 @@ const LoginPage = () => {
 
                             <div>
                                 <div className="flex items-center justify-between mb-2">
-                                    <label className="label-text mb-0">Security Password</label>
-                                    <button type="button" className="text-[10px] font-black uppercase tracking-widest text-nature-600 hover:text-nature-500 transition-colors">Forgot?</button>
+                                    <label className="label-text mb-0">{t('auth.password_label')}</label>
+                                    <button type="button" className="text-[10px] font-black uppercase tracking-widest text-nature-600 hover:text-nature-500 transition-colors">{t('auth.forgot_password')}</button>
                                 </div>
                                 <div className="relative group">
                                     <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
@@ -204,24 +210,24 @@ const LoginPage = () => {
                                 {isLoading ? (
                                     <span className="flex items-center gap-3">
                                         <div className="w-5 h-5 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Authenticating...
+                                        {t('auth.authenticating')}
                                     </span>
                                 ) : (
                                     <>
                                         <LogIn className="w-6 h-6 transition-transform group-hover:translate-x-1" />
-                                        <span>Secure Log In</span>
+                                        <span>{t('auth.login_button')}</span>
                                     </>
                                 )}
                             </button>
 
                             <div className="pt-8 border-t border-slate-100 mt-10">
                                 <p className="text-center text-slate-500 font-bold mb-4">
-                                    New to the platform?
-                                    <Link to="/register" className="text-nature-600 hover:text-nature-500 ml-2 transition-colors">Apply for Account</Link>
+                                    {t('auth.new_user')}
+                                    <Link to="/register" className="text-nature-600 hover:text-nature-500 ml-2 transition-colors">{t('auth.apply_account')}</Link>
                                 </p>
                                 <p className="text-center text-slate-400 font-bold text-xs uppercase tracking-widest">
-                                    Agricultural Expert?
-                                    <Link to="/labor-register" className="text-slate-900 hover:text-nature-600 ml-2 transition-colors">Register as Labor</Link>
+                                    {t('auth.expert_prompt')}
+                                    <Link to="/labor-register" className="text-slate-900 hover:text-nature-600 ml-2 transition-colors">{t('auth.register_labor')}</Link>
                                 </p>
                             </div>
                         </form>

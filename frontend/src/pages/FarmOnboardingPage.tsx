@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import axios from "axios";
@@ -11,11 +11,35 @@ const FarmOnboardingPage = () => {
     const navigate = useNavigate();
     const [isLoading, setIsLoading] = useState(false);
     const [formData, setFormData] = useState({
+        crop_type: "Soybean",
         soil_type: "loamy",
         irrigation_type: "drip",
         planting_date: new Date().toISOString().split('T')[0],
         crop_variety: ""
     });
+
+    useEffect(() => {
+        const fetchProfile = async () => {
+            try {
+                const token = localStorage.getItem("token");
+                const res = await axios.get("http://localhost:8000/api/profile", {
+                    headers: { Authorization: `Bearer ${token}` }
+                });
+                if (res.data) {
+                    setFormData({
+                        crop_type: res.data.crop_type || "Soybean",
+                        soil_type: res.data.soil_type || "loamy",
+                        irrigation_type: res.data.irrigation_type || "drip",
+                        planting_date: res.data.planting_date || new Date().toISOString().split('T')[0],
+                        crop_variety: res.data.crop_variety || ""
+                    });
+                }
+            } catch (err) {
+                console.error("Failed to fetch profile", err);
+            }
+        };
+        fetchProfile();
+    }, []);
 
     const handleChange = (e: React.ChangeEvent<HTMLSelectElement | HTMLInputElement>) => {
         setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -29,7 +53,8 @@ const FarmOnboardingPage = () => {
             await axios.patch("http://localhost:8000/api/profile", formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
-            navigate("/dashboard");
+            // Redirect back to farming calendar to see results immediately
+            navigate("/farming-calendar");
         } catch (err) {
             console.error("Failed to update profile", err);
             alert("Failed to save farm details. Please try again.");
@@ -55,6 +80,25 @@ const FarmOnboardingPage = () => {
 
                     <form onSubmit={handleSubmit} className="p-8 md:p-12 space-y-8">
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                            {/* Crop Type Selection */}
+                            <div className="md:col-span-2 space-y-3">
+                                <label className="text-sm font-black text-slate-700 flex items-center gap-2 uppercase tracking-wider">
+                                    <Wheat className="w-4 h-4 text-nature-600" /> Select Your Crop
+                                </label>
+                                <select 
+                                    name="crop_type"
+                                    value={formData.crop_type}
+                                    onChange={handleChange}
+                                    className="w-full h-14 bg-slate-50 border-2 border-slate-100 rounded-2xl px-4 font-bold text-slate-800 outline-none focus:border-nature-500 transition-all appearance-none cursor-pointer"
+                                    required
+                                >
+                                    <option value="">Select Crop</option>
+                                    <option value="Soybean">Soybean</option>
+                                    <option value="Wheat">Wheat</option>
+                                    <option value="Cotton">Cotton</option>
+                                </select>
+                            </div>
+
                             {/* Soil Type */}
                             <div className="space-y-3">
                                 <label className="text-sm font-black text-slate-700 flex items-center gap-2 uppercase tracking-wider">

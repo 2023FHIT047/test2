@@ -1,0 +1,335 @@
+{
+  "analyzing_models": "Analyzing localized climate models...",
+  "location_required": "Location Required",
+  "set_location": "Set Farm Location",
+  "agronomist_insights": "Agronomist Insights",
+  "soil_temp": "Soil Temp",
+  "dew_point": "Dew Point",
+  "uv_index": "UV Index",
+  "evap": "Evap (ET)",
+  "pressure": "Pressure",
+  "visibility": "Visibility",
+  "24h_trend": "24-Hour Trend Analysis",
+  "5day_forecast": "5-Day Forecast",
+  "current_day": "Today",
+  "weather": {
+    "clear": "Clear Sky",
+    "clouds": "Cloudy",
+    "rain": "Rain",
+    "storm": "Storm",
+    "precip": "Precipitation",
+    "high": "High",
+    "low": "Low",
+    "wind_speed": "Wind Speed",
+    "humidity": "Humidity",
+    "rain_chance": "Rain Probability",
+    "temperature": "Temperature",
+    "coordinates_active": "Coordinates Active"
+  },
+  "nav": {
+    "features": "Features",
+    "how_it_works": "How It Works",
+    "schemes": "Schemes",
+    "dos_donts": "Do's & Don'ts",
+    "testimonials": "Testimonials",
+    "faq": "FAQ",
+    "login": "Login",
+    "get_started": "Get Started",
+    "select_language": "Select Language"
+  },
+  "landing": {
+    "hero_title": "Smart Farming Intelligence Platform",
+    "hero_subtitle": "Empower your farm with precision weather forecasts, AI-powered crop advisories, and early climate alerts. Make data-driven decisions for better yields.",
+    "start_trial": "Start Free Trial",
+    "see_features": "See Features",
+    "trusted_by": "Trusted by 10,000+ Farmers",
+    "demo_subtitle": "Live Demo",
+    "demo_title": "See Weather in Your Area",
+    "demo_desc": "Explore hyper-local weather data for villages across India."
+  },
+  "dashboard": {
+    "title": "Dashboard",
+    "farm_overview": "Farm Overview",
+    "optimal_yield": "Optimal Yield",
+    "real_time": "Real-time intelligence for",
+    "sidebar": {
+      "dashboard": "Dashboard",
+      "forecast": "Forecast Models",
+      "calendar": "AI Calendar",
+      "analytics": "Analytics",
+      "risk": "Risk Center",
+      "advisory": "Advisory",
+      "irrigation": "Irrigation",
+      "disease": "Disease Detect",
+      "pests": "Pest Control",
+      "labor": "Find Labor"
+    },
+    "search": "Search insights, locations, metrics...",
+    "locate_farm": "Locate Farm",
+    "logout": "Logout",
+    "upgrade": "Upgrade to Pro",
+    "upgrade_desc": "Satellite imagery and AI predictive modeling.",
+    "view_plans": "View Plans",
+    "calibrating": "Calibrating Farm Sensors...",
+    "farm_identity": "Farm Identity",
+    "crop_variety": "CROP VARIETY",
+    "soil": "SOIL",
+    "system": "SYSTEM",
+    "edit_profile": "Edit Profile",
+    "high_risk_alerts": "High Risk Alerts",
+    "precision_spotlight": "Precision Agriculture Spotlight",
+    "risk_engine": "Real-time Risk Engine",
+    "satellite_title": "Satellite Crop Monitoring",
+    "multi_spectral_intel": "Multi-Spectral Intel",
+    "heatwave_warning": "Heatwave Warning",
+    "heatwave_details": "Temps reached {{temp}}°C. Critical for {{crop}}.",
+    "fungal_warning": "Fungal Proliferation",
+    "fungal_details": "High humidity detected. Inspect crops for early signs of blight.",
+    "precip": "PRECIP",
+    "humidity": "HUMIDITY",
+    "wind_speed": "WIND SPEED",
+    "uv_index": "UV INDEX",
+    "rain_prob": "RAIN PROB",
+    "notifications_title": "Notifications",
+    "action_plan": "Action Plan",
+    "crops": {
+      "rice": "Rice",
+      "wheat": "Wheat",
+      "cotton": "Cotton",
+      "soybean": "Soybean",
+      "maize": "Maize"
+    }
+  },
+  "auth": {
+    "login_title": "Welcome Back",
+    "login_subtitle": "Access your professional farm monitoring cockpit.",
+    "email_label": "Professional Email",
+    "password_label": "Security Password",
+    "forgot_password": "Forgot?",
+    "login_button": "Secure Log In",
+    "authenticating": "Authenticating...",
+    "new_user": "New to the platform?",
+    "apply_account": "Apply for Account",
+    "expert_prompt": "Agricultural Expert?",
+    "register_labor": "Register as Labor",
+    "empowering_title": "Empowering The <0>Green</0> Revolution.",
+    "empowering_desc": "Join thousands of farmers using real-time data to protect their livelihood and maximize harvest capacity.",
+    "benefit1": "Village-level Weather Accuracy",
+    "benefit2": "AI-Powered Pest Predictions",
+    "benefit3": "Real-time Climate Risk Alerts",
+    "register_title": "Join the Revolution",
+    "register_subtitle": "Start your digital farming journey today.",
+    "full_name": "Full Legal Name",
+    "phone": "Mobile Contact",
+    "create_account": "Create Account",
+    "success_title": "Profile Created!",
+    "success_desc": "Your professional agriculture cockpit is being prepared. Redirecting...",
+    "farm_config": "Farm Configuration",
+    "village": "Village Name",
+    "district": "District (Maharashtra)",
+    "select_district": "Select District",
+    "farm_location": "Farm Location (Village, District, State)",
+    "farm_size": "Total Farm Size (Acres)",
+    "crop_class": "Major Crop Classification",
+    "select_crop": "Select Crop",
+    "complete_reg": "Complete Professional Registration",
+    "creating_profile": "Creating Profile...",
+    "already_registered": "Already registered for Intelligence?",
+    "login_link": "Log in to Dashboard",
+    "personal_identity": "Personal Identity",
+    "platform_security": "Platform Security",
+    "confirm_password": "Confirm Password"
+  },
+  "forecast": {
+    "title": "Atmospheric Forecasting",
+    "subtitle": "Real-time predictive modeling based on village-level sensor arrays and satellite multispectral data.",
+    "satellite_intel": "Satellite Intelligence",
+    "temp_trajectory": "Temperature Trajectory (24h)",
+    "rain_prob_chart": "Rainfall Probability (24h)",
+    "dynamic_prediction": "Dynamic Prediction",
+    "atmospheric_data": "Atmospheric Data",
+    "temp_peak_desc": "Next 24h peak expected",
+    "rain_prob_desc": "Precipitation probability",
+    "humidity_desc": "Current air saturation",
+    "wind_vector_desc": "Current vector velocity",
+    "analyzing": "Analyzing Atmosphere..."
+  },
+  "analytics": {
+    "title": "Crop Intelligence",
+    "subtitle": "Real-time monitoring of photosynthesis velocity, cellular hydration, and developmental phenology.",
+    "biological_insights": "Biological Insights",
+    "crop_health": "Crop Health",
+    "soil_moisture": "Soil Moisture",
+    "growth_stage": "Growth Stage",
+    "irrigation_status": "Irrigation Status",
+    "growth_trend": "Growth Velocity Trend",
+    "hydration_levels": "Hydration Levels (30cm Depth)",
+    "active_monitoring": "Active Monitoring",
+    "volumetric_data": "Volumetric Data",
+    "ndvi_desc": "NDVI Satellite Index",
+    "soil_moisture_desc": "Volumetric Water Content",
+    "phenology_desc": "Phenol-Log Development",
+    "hydro_status_desc": "Hydro-Requirement Status",
+    "generating": "Generating Crop Intelligence..."
+  },
+  "calendar": {
+    "title": "AI Farming Calendar",
+    "subtitle": "Your personalized agricultural timeline based on crop lifecycle and real-time weather data.",
+    "day": "Day",
+    "task": "Task",
+    "today": "Today's Task",
+    "completed": "Completed",
+    "season_progress": "Season Progress",
+    "rest_day": "Rest Day",
+    "no_task": "No Task",
+    "lifecycle": "Lifecycle",
+    "upcoming": "Upcoming",
+    "critical": "Critical",
+    "climate_intel_adjustment": "Climate Intel Adjustment",
+    "no_calendar_data": "No Calendar Data",
+    "set_crop_details": "Set Crop Details",
+    "search_placeholder": "Search tasks, advisories..."
+  },
+  "monday": "Monday", "tuesday": "Tuesday", "wednesday": "Wednesday", "thursday": "Thursday", "friday": "Friday", "saturday": "Saturday", "sunday": "Sunday",
+  "mon": "Mon", "tue": "Tue", "wed": "Wed", "thu": "Thu", "fri": "Fri", "sat": "Sat", "sun": "Sun",
+  "alerts": {
+    "title": "Disaster Alerts",
+    "heavy_rain_warning": "Heavy rainfall expected in the next 24 hours. Protect crops and ensure proper drainage.",
+    "flood_warning": "High flood risk detected. Move livestock to higher ground and clear all drainage channels.",
+    "heatwave_warning": "Severe heatwave alert. Increase irrigation frequency and provide shade to sensitive crops.",
+    "drought_warning": "Prolonged dry spell detected. Implement water conservation techniques and mulching.",
+    "optimal_weather": "Weather conditions are stable and optimal for farming activities.",
+    "actions": {
+      "protect_crops_drainage": "Protect crops & check drainage",
+      "move_livestock_drainage": "Secure livestock & clear channels",
+      "increase_irrigation_shade": "Increase irrigation & provide shade",
+      "conserve_water_mulching": "Conserve water & apply mulch",
+      "proceed_with_activities": "Safe to proceed with farm work"
+    },
+    "severity": {
+      "severe": "Severe Alert",
+      "moderate": "Moderate Risk",
+      "safe": "Safe"
+    }
+  },
+  "satellite": {
+    "live_feed": "Live Feed",
+    "monitoring": "Satellite monitoring for your farm location",
+    "multi_spectral": "Multi-Spectral Analysis",
+    "vhi": "Vegetation Health Index",
+    "current_ndvi": "Current NDVI Score",
+    "observation_details": "Observation Details",
+    "satellite_info": "Data combined from ESA Sentinel-2B and Landsat 9. Last pixel-clearing cloud mask applied 4h ago.",
+    "ai_summary_title": "AI-Powered Crop Summary",
+    "download_pdf": "Download Detailed PDF",
+    "processing": "Processing...",
+    "hover_info": "Hover over map areas for point-level NDVI data",
+    "point_ndvi": "Point NDVI",
+    "ndvi_scale": "NDVI Scale",
+    "healthy": "Healthy",
+    "moderate": "Moderate",
+    "stressed": "Stressed",
+    "drought_risk": "Drought Risk",
+    "chlorophyll": "Chlorophyll Level"
+  },
+  "voice": {
+    "title": "AI Voice Assistant",
+    "subtitle": "Multilingual · Farmer First",
+    "listening": "Listening...",
+    "expert_prompt": "Ask your farm expert",
+    "placeholder": "Type your question..."
+  },
+  "features": {
+    "subtitle": "Platform Features",
+    "title": "Everything Your Farm Needs",
+    "description": "From village-level weather to AI-powered crop advisories, KrushiSarthi has you covered.",
+    "weather": {
+      "title": "Weather Forecasting",
+      "desc": "Hyper-local hourly forecasts powered by satellite data and ML models for your exact location."
+    },
+    "risk": {
+      "title": "Risk Prediction",
+      "desc": "AI-powered crop risk assessment using Random Forest & XGBoost for weather-related damage."
+    },
+    "advisory": {
+      "title": "Crop Advisory",
+      "desc": "Smart recommendations for irrigation, fertilization, and pest control based on real-time data."
+    },
+    "pests": {
+      "title": "Pest Detection",
+      "desc": "Predict pest and disease outbreaks by analyzing humidity, temperature, and weather patterns."
+    },
+    "alerts": {
+      "title": "Smart Alerts",
+      "desc": "Instant notifications for storms, heatwaves, drought, and frost via SMS and push alerts."
+    },
+    "mapping": {
+      "title": "Farm Mapping",
+      "desc": "Interactive maps with rain heatmaps, wind direction, and soil moisture layers."
+    }
+  },
+  "how_it_works": {
+    "subtitle": "Simple Process",
+    "title": "How KrushiSarthi Works",
+    "description": "Get started in minutes - no technical knowledge required.",
+    "step1": {
+      "title": "Pin Your Farm",
+      "desc": "Enter your village location or use GPS to set your farm's exact coordinates on the map."
+    },
+    "step2": {
+      "title": "Add Your Crops",
+      "desc": "Tell us what you grow - we customize every alert and advisory for your specific crops."
+    },
+    "step3": {
+      "title": "Get Live Alerts",
+      "desc": "Receive real-time notifications for any weather event that could affect your field."
+    },
+    "step4": {
+      "title": "Boost Your Yield",
+      "desc": "Use data-driven insights to make smarter decisions and maximize farm profitability."
+    }
+  },
+  "schemes": {
+    "subtitle": "Government Support",
+    "title": "Government Schemes for Farmers",
+    "description": "Explore Maharashtra and Central Government schemes that support farmers with subsidies, insurance, irrigation assistance, and financial benefits.",
+    "benefits": "Key Benefits",
+    "visit_official": "Visit Official Website",
+    "view_all": "View All Schemes"
+  },
+  "dos_donts": {
+    "subtitle": "Disease Prevention",
+    "title": "Do's & Don'ts for Common Diseases",
+    "description": "Follow these guidelines to prevent and manage common crop diseases.",
+    "dos": "Do's",
+    "donts": "Don'ts",
+    "swipe": "Swipe to view more",
+    "diseases": {
+      "blast": "Blast Disease",
+      "blight": "Bacterial Blight",
+      "mildew": "Powdery Mildew",
+      "rust": "Rust Disease",
+      "leaf_spot": "Leaf Spot",
+      "root_rot": "Root Rot",
+      "fungal": "Fungal Infection",
+      "viral": "Viral Disease"
+    }
+  },
+  "testimonials": {
+    "t1": {
+      "name": "Ramesh Singh",
+      "role": "Wheat Farmer, Madhya Pradesh",
+      "content": "KrushiSarthi helped me save my wheat crop during an unexpected heatwave. The 6-hour advance warning gave me time to irrigate and protect my harvest."
+    },
+    "t2": {
+      "name": "Priya Devi",
+      "role": "Vegetable Grower, Maharashtra",
+      "content": "The pest prediction feature is incredible! I was able to prevent a fungal outbreak in my tomato crop before it spread. Highly recommended for all farmers."
+    },
+    "t3": {
+      "name": "Suresh Kumar",
+      "role": "Rice Farmer, Tamil Nadu",
+      "content": "The weather forecasts are so accurate for my village. I've reduced my irrigation costs by 40% and improved my rice yield significantly."
+    }
+  }
+}

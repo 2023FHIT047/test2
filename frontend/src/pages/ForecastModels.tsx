@@ -1,16 +1,18 @@
 import { useState, useEffect } from "react";
+import { useLanguage } from "../context/LanguageContext";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
     LayoutDashboard, Cloud, Activity, AlertTriangle,
-    ThermometerSun, Droplets, Wind, CloudRain, Sprout, Leaf, Bug, Beaker, Briefcase
+    ThermometerSun, Droplets, Wind, CloudRain, Leaf, Bug, Beaker, Briefcase
 } from "lucide-react";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, AreaChart, Area
 } from 'recharts';
 
 const ForecastModels = () => {
+    const { t } = useLanguage();
     const [weatherData, setWeatherData] = useState<any>(null);
     const [loading, setLoading] = useState(true);
 
@@ -34,7 +36,7 @@ const ForecastModels = () => {
     if (loading) return (
         <div className="flex flex-col items-center justify-center min-h-screen bg-slate-50">
             <div className="w-16 h-16 border-4 border-nature-200 border-t-nature-600 rounded-full animate-spin mb-4" />
-            <p className="font-black text-nature-700 tracking-widest uppercase text-xs">Analyzing Atmosphere...</p>
+            <p className="font-black text-nature-700 tracking-widest uppercase text-xs">{t('forecast.analyzing')}</p>
         </div>
     );
 
@@ -42,16 +44,16 @@ const ForecastModels = () => {
         <div className="min-h-screen bg-slate-50 flex font-sans">
             {/* Fixed Left Sidebar Navigation */}
             <aside className="fixed w-20 xl:w-72 h-screen pt-24 pb-24 px-5 flex flex-col gap-2 border-r border-slate-200 bg-white/40 backdrop-blur-2xl hidden md:flex z-50 overflow-y-auto no-scrollbar">
-                <Link to="/dashboard"><SidebarItem icon={<LayoutDashboard />} label="Dashboard" /></Link>
-                <SidebarItem icon={<Cloud />} label="Forecast Models" active />
-                <Link to="/crop-analytics"><SidebarItem icon={<Activity />} label="Crop Analytics" /></Link>
-                <Link to="/risk-analytics"><SidebarItem icon={<AlertTriangle />} label="Risk Center" /></Link>
+                <Link to="/dashboard"><SidebarItem icon={<LayoutDashboard />} label={t('dashboard.sidebar.dashboard')} /></Link>
+                <SidebarItem icon={<Cloud />} label={t('dashboard.sidebar.forecast')} active />
+                <Link to="/crop-analytics"><SidebarItem icon={<Activity />} label={t('dashboard.sidebar.analytics')} /></Link>
+                <Link to="/risk-analytics"><SidebarItem icon={<AlertTriangle />} label={t('dashboard.sidebar.risk')} /></Link>
                 <div className="h-px bg-slate-200/50 my-6 mx-4" />
-                <Link to="/crop-advisory"><SidebarItem icon={<Leaf />} label="Crop Advisory" /></Link>
-                <Link to="/dashboard"><SidebarItem icon={<Droplets />} label="Smart Irrigation" /></Link>
-                <Link to="/disease-detection"><SidebarItem icon={<Beaker />} label="Crop Disease Detection" /></Link>
-                <Link to="/pest-detection"><SidebarItem icon={<Bug />} label="Pest Detection" /></Link>
-                <Link to="/find-labor"><SidebarItem icon={<Briefcase />} label="Find Labor" /></Link>
+                <Link to="/crop-advisory"><SidebarItem icon={<Leaf />} label={t('dashboard.sidebar.advisory')} /></Link>
+                <Link to="/dashboard"><SidebarItem icon={<Droplets />} label={t('dashboard.sidebar.irrigation')} /></Link>
+                <Link to="/disease-detection"><SidebarItem icon={<Beaker />} label={t('dashboard.sidebar.disease')} /></Link>
+                <Link to="/pest-detection"><SidebarItem icon={<Bug />} label={t('dashboard.sidebar.pests')} /></Link>
+                <Link to="/find-labor"><SidebarItem icon={<Briefcase />} label={t('dashboard.sidebar.labor')} /></Link>
             </aside>
 
             <main className="flex-1 ml-0 md:ml-20 xl:ml-72 p-10">
@@ -68,27 +70,27 @@ const ForecastModels = () => {
                                 initial={{ opacity: 0 }} animate={{ opacity: 1 }}
                                 className="text-[10px] font-black text-nature-400 uppercase tracking-[0.3em] mb-4"
                             >
-                                Satellite Intelligence
+                                {t('forecast.satellite_intel')}
                             </motion.span>
                             <motion.h2
                                 initial={{ opacity: 0, x: -20 }}
                                 animate={{ opacity: 1, x: 0 }}
                                 className="text-5xl font-black text-white tracking-tight leading-tight"
                             >
-                                Atmospheric <span className="text-nature-500">Forecasting.</span>
+                                {t('forecast.title').split(' ')[0]} <span className="text-nature-500">{t('forecast.title').split(' ').slice(1).join(' ')}.</span>
                             </motion.h2>
                             <p className="text-white/60 mt-4 font-bold text-lg max-w-xl">
-                                Real-time predictive modeling based on village-level sensor arrays and satellite multispectral data.
+                                {t('forecast.subtitle')}
                             </p>
                         </div>
                     </div>
                 </header>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    <ForecastCard icon={<ThermometerSun className="w-6 h-6 text-orange-500" />} label="Temperature" value={`${weatherData?.current?.temperature}°C`} desc="Next 24h peak expected" color="orange" delay={0.1} />
-                    <ForecastCard icon={<CloudRain className="w-6 h-6 text-blue-500" />} label="Rainfall" value={`${weatherData?.current?.rain_chance}%`} desc="Precipitation probability" color="blue" delay={0.2} />
-                    <ForecastCard icon={<Droplets className="w-6 h-6 text-cyan-500" />} label="Humidity" value={`${weatherData?.current?.humidity}%`} desc="Current air saturation" color="cyan" delay={0.3} />
-                    <ForecastCard icon={<Wind className="w-6 h-6 text-slate-500" />} label="Wind Speed" value={`${weatherData?.current?.wind_speed} km/h`} desc="Current vector velocity" color="slate" delay={0.4} />
+                    <ForecastCard icon={<ThermometerSun className="w-6 h-6 text-orange-500" />} label={t('weather.temperature')} value={`${weatherData?.current?.temperature}°C`} desc={t('forecast.temp_peak_desc')} color="orange" delay={0.1} />
+                    <ForecastCard icon={<CloudRain className="w-6 h-6 text-blue-500" />} label={t('weather.precip')} value={`${weatherData?.current?.rain_chance}%`} desc={t('forecast.rain_prob_desc')} color="blue" delay={0.2} />
+                    <ForecastCard icon={<Droplets className="w-6 h-6 text-cyan-500" />} label={t('weather.humidity')} value={`${weatherData?.current?.humidity}%`} desc={t('forecast.humidity_desc')} color="cyan" delay={0.3} />
+                    <ForecastCard icon={<Wind className="w-6 h-6 text-slate-500" />} label={t('weather.wind_speed')} value={`${weatherData?.current?.wind_speed} km/h`} desc={t('forecast.wind_vector_desc')} color="slate" delay={0.4} />
                 </div>
 
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
@@ -99,8 +101,8 @@ const ForecastModels = () => {
                         className="modern-card p-8 bg-white"
                     >
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-xl font-black text-slate-800">Temperature Trajectory (24h)</h3>
-                            <span className="text-[10px] font-black px-3 py-1 bg-orange-50 text-orange-600 rounded-full border border-orange-100 uppercase tracking-widest">Dynamic Prediction</span>
+                            <h3 className="text-xl font-black text-slate-800">{t('forecast.temp_trajectory')}</h3>
+                            <span className="text-[10px] font-black px-3 py-1 bg-orange-50 text-orange-600 rounded-full border border-orange-100 uppercase tracking-widest">{t('forecast.dynamic_prediction')}</span>
                         </div>
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">
@@ -130,8 +132,8 @@ const ForecastModels = () => {
                         className="modern-card p-8 bg-white"
                     >
                         <div className="flex items-center justify-between mb-8">
-                            <h3 className="text-xl font-black text-slate-800">Rainfall Probability (24h)</h3>
-                            <span className="text-[10px] font-black px-3 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-100 uppercase tracking-widest">Atmospheric Data</span>
+                            <h3 className="text-xl font-black text-slate-800">{t('forecast.rain_prob_chart')}</h3>
+                            <span className="text-[10px] font-black px-3 py-1 bg-blue-50 text-blue-600 rounded-full border border-blue-100 uppercase tracking-widest">{t('forecast.atmospheric_data')}</span>
                         </div>
                         <div className="h-[350px]">
                             <ResponsiveContainer width="100%" height="100%">

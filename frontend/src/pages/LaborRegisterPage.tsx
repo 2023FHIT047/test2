@@ -1,7 +1,8 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sprout, Eye, EyeOff, CheckCircle2, AlertCircle, User, Phone, MapPin, Briefcase, ChevronRight, Lock } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, AlertCircle, User, Phone, MapPin, Briefcase, ChevronRight, Lock } from "lucide-react";
+import Logo from "../components/Logo";
 import axios from "axios";
 
 const MAHARASHTRA_DISTRICTS = [
@@ -109,9 +110,9 @@ const LaborRegisterPage = () => {
                 <div className="relative z-10 max-w-md text-center lg:text-left">
                     <Link to="/" className="inline-flex items-center gap-4 mb-20 justify-center lg:justify-start">
                         <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                            <Sprout className="text-nature-600 w-8 h-8" />
+                            <Logo size={32} />
                         </div>
-                        <span className="text-3xl font-black text-white italic tracking-tighter">AgroCast</span>
+                        <span className="text-3xl font-black text-white italic tracking-tighter">KrushiSarthi</span>
                     </Link>
 
                     <h2 className="text-5xl font-black text-white mb-8 leading-tight tracking-tighter">

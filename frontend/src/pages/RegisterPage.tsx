@@ -1,8 +1,10 @@
 import { motion } from "framer-motion";
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { Sprout, Eye, EyeOff, CheckCircle2, AlertCircle, Leaf, Scale, User, Phone, Mail, Lock, MapPin, Wheat, Ruler, ChevronRight } from "lucide-react";
+import { Eye, EyeOff, CheckCircle2, AlertCircle, Leaf, Scale, User, Phone, Mail, Lock, MapPin, Wheat, Ruler, ChevronRight } from "lucide-react";
+import Logo from "../components/Logo";
 import axios from "axios";
+import { useLanguage } from "../context/LanguageContext";
 
 const MAHARASHTRA_DISTRICTS = [
     "Ahmednagar", "Akola", "Amravati", "Aurangabad", "Beed", "Bid (Beed)", "Buldhana",
@@ -13,6 +15,7 @@ const MAHARASHTRA_DISTRICTS = [
 ];
 
 const RegisterPage = () => {
+    const { t } = useLanguage();
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState(false);
     const [isSuccess, setIsSuccess] = useState(false);
@@ -89,8 +92,8 @@ const RegisterPage = () => {
                     <div className="w-24 h-24 bg-nature-600 rounded-[2.5rem] flex items-center justify-center mx-auto mb-8 shadow-2xl shadow-nature-600/30">
                         <CheckCircle2 className="text-white w-12 h-12" />
                     </div>
-                    <h2 className="text-4xl font-black mb-4 text-slate-900 tracking-tight">Profile Created!</h2>
-                    <p className="text-slate-500 mb-10 font-bold text-lg leading-relaxed">Your professional agriculture cockpit is being prepared. Redirecting...</p>
+                    <h2 className="text-4xl font-black mb-4 text-slate-900 tracking-tight">{t('auth.success_title')}</h2>
+                    <p className="text-slate-500 mb-10 font-bold text-lg leading-relaxed">{t('auth.success_desc')}</p>
                     <div className="w-full bg-slate-100 h-2 rounded-full overflow-hidden">
                         <motion.div
                             initial={{ width: 0 }}
@@ -124,9 +127,9 @@ const RegisterPage = () => {
                 <div className="relative z-10 max-w-md">
                     <Link to="/" className="inline-flex items-center gap-4 mb-20">
                         <div className="w-14 h-14 bg-white rounded-2xl flex items-center justify-center shadow-2xl">
-                            <Sprout className="text-nature-600 w-8 h-8" />
+                            <Logo size={32} />
                         </div>
-                        <span className="text-3xl font-black text-white italic tracking-tighter">AgroCast</span>
+                        <span className="text-3xl font-black text-white italic tracking-tighter">KrushiSarthi</span>
                     </Link>
 
                     <motion.div
@@ -135,19 +138,17 @@ const RegisterPage = () => {
                         className="mb-16"
                     >
                         <h2 className="text-5xl font-black text-white mb-8 leading-tight tracking-tighter">
-                            Your Farm. <br />
-                            Your Data. <br />
-                            <span className="text-nature-500">Your Future.</span>
+                            {t('auth.register_title')}
                         </h2>
                         <p className="text-lg text-white/60 font-medium leading-relaxed">
-                            Start using the world's most advanced hyperlocal climate intelligence platform for modern agriculture.
+                            {t('auth.register_subtitle')}
                         </p>
                     </motion.div>
 
                     <div className="space-y-4">
                         {[
-                            { icon: <Leaf />, title: "Precision Analytics", desc: "Data driven crop insights" },
-                            { icon: <Scale />, title: "Asset Optimization", desc: "Reduce resource wastage" },
+                            { icon: <Leaf />, title: t('auth.benefit1'), desc: "Precision Analytics" },
+                            { icon: <Scale />, title: t('auth.benefit2'), desc: "Asset Optimization" },
                         ].map((item, i) => (
                             <motion.div
                                 key={i}
@@ -175,14 +176,14 @@ const RegisterPage = () => {
                     {/* Mobile Branding */}
                     <div className="lg:hidden flex flex-col items-center mb-12">
                         <div className="w-12 h-12 bg-nature-600 rounded-2xl flex items-center justify-center mb-4">
-                            <Sprout className="text-white w-7 h-7" />
+                            <Logo size={28} />
                         </div>
-                        <h1 className="text-2xl font-black text-slate-800 italic">AgroCast</h1>
+                        <h1 className="text-2xl font-black text-slate-800 italic">KrushiSarthi</h1>
                     </div>
 
                     <div className="mb-12">
-                        <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">Create Professional Account</h1>
-                        <p className="text-slate-500 font-bold text-lg">Join 10,000+ farmers revolutionizing their harvest methodology.</p>
+                        <h1 className="text-4xl font-black text-slate-900 mb-3 tracking-tight">{t('auth.register_title')}</h1>
+                        <p className="text-slate-500 font-bold text-lg">{t('auth.register_subtitle')}</p>
                     </div>
 
                     <motion.div
@@ -197,184 +198,178 @@ const RegisterPage = () => {
                             </div>
                         )}
 
-                        <form onSubmit={handleSubmit} className="space-y-10">
-                            {/* Personal Info */}
-                            <section>
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-nature-600 mb-6 flex items-center gap-2">
-                                    <div className="w-8 h-[1px] bg-nature-600/30" /> Personal Identity
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="label-text">Full Legal Name</label>
-                                        <div className="relative group">
-                                            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
-                                            <input
-                                                name="name" type="text" placeholder="e.g. Ganesh Patil" required
-                                                className="w-full bg-slate-50 border border-slate-200/60 rounded-2xl px-12 py-4 outline-none transition-all duration-300 placeholder:text-slate-400 font-bold focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5 shadow-sm"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="label-text">Mobile Contact</label>
-                                        <div className="relative group">
-                                            <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
-                                            <input
-                                                name="phone" type="tel" placeholder="+91 98XXX XXX00" required
-                                                className="w-full bg-slate-50 border border-slate-200/60 rounded-2xl px-12 py-4 outline-none transition-all duration-300 placeholder:text-slate-400 font-bold focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5 shadow-sm"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="md:col-span-2 space-y-2">
-                                        <label className="label-text">Professional Email</label>
-                                        <div className="relative group">
-                                            <Mail className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="email" type="email" placeholder="farmer@agrocast.com" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
+                        <form onSubmit={handleSubmit} className="space-y-6">
+                            <div className="form-grid">
+                                {/* Row 1: Full Legal Name | Mobile Contact */}
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.full_name')}</label>
+                                    <div className="relative group">
+                                        <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="name" type="text" placeholder="e.g. Ganesh Patil" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                 </div>
-                            </section>
-
-                            {/* Security */}
-                            <section>
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-nature-600 mb-6 flex items-center gap-2">
-                                    <div className="w-8 h-[1px] bg-nature-600/30" /> Platform Security
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="label-text">Security Password</label>
-                                        <div className="relative group">
-                                            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="password" type={showPassword ? "text" : "password"} placeholder="••••••••" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-nature-600 transition-colors"
-                                            >
-                                                {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
-                                            </button>
-                                        </div>
-                                        <div className="mt-3 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
-                                            <motion.div
-                                                initial={{ width: 0 }}
-                                                animate={{ width: `${getPasswordStrength()}%` }}
-                                                className={`h-full transition-all duration-500 ${getPasswordStrength() === 100 ? 'bg-nature-500' : 'bg-yellow-500'}`}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="label-text">Confirm Security Password</label>
-                                        <div className="relative group">
-                                            <Lock className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="confirmPassword" type="password" placeholder="••••••••" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.phone')}</label>
+                                    <div className="relative group">
+                                        <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="phone" type="tel" placeholder="+91 98XXX XXX00" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                 </div>
-                            </section>
 
-                            {/* Farm Details */}
-                            <section>
-                                <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-nature-600 mb-6 flex items-center gap-2">
-                                    <div className="w-8 h-[1px] bg-nature-600/30" /> Farm Configuration
-                                </h3>
-                                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                                    <div className="space-y-2">
-                                        <label className="label-text">Village Name</label>
-                                        <div className="relative group">
-                                            <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="village" type="text" placeholder="Enter village name" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="label-text">District (Maharashtra)</label>
-                                        <div className="relative group">
-                                            <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
-                                            <select
-                                                name="district" required
-                                                className="input-field pl-14 appearance-none bg-none"
-                                                onChange={handleChange}
-                                                style={{ backgroundImage: 'none' }}
-                                            >
-                                                <option value="">Select District</option>
-                                                {MAHARASHTRA_DISTRICTS.map(district => (
-                                                    <option key={district} value={district.toLowerCase()}>{district}</option>
-                                                ))}
-                                            </select>
-                                        </div>
-                                    </div>
-                                    <div className="md:col-span-2 space-y-2">
-                                        <label className="label-text">Farm Location (Village, District, State)</label>
-                                        <div className="relative group">
-                                            <MapPin className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="farm_location" type="text" placeholder="Village name, District, Maharashtra" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="label-text">Total Farm Size (Acres)</label>
-                                        <div className="relative group">
-                                            <Ruler className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="farm_size" type="number" placeholder="5.4" step="0.1" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
-                                    </div>
-                                    <div className="space-y-2">
-                                        <label className="label-text">Major Crop Classification</label>
-                                        <div className="relative group">
-                                            <Wheat className="absolute left-5 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors" />
-                                            <input
-                                                name="crop_type" type="text" placeholder="e.g. Wheat / Cotton" required
-                                                className="input-field pl-14"
-                                                onChange={handleChange}
-                                            />
-                                        </div>
+                                {/* Row 2: Professional Email (full width) */}
+                                <div className="form-field full-width">
+                                    <label className="label-text">{t('auth.email_label')}</label>
+                                    <div className="relative group">
+                                        <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="email" type="email" placeholder="farmer@agrocast.com" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
                                     </div>
                                 </div>
-                            </section>
 
-                            <button
-                                type="submit" disabled={isLoading}
-                                className="w-full btn-primary !py-6 text-xl flex items-center justify-center gap-4 group"
-                            >
-                                {isLoading ? (
-                                    <span className="flex items-center gap-3">
-                                        <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
-                                        Creating Profile...
-                                    </span>
-                                ) : (
-                                    <>
-                                        Complete Professional Registration
-                                        <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
-                                    </>
-                                )}
-                            </button>
+                                {/* Row 3: Security Password | Confirm Password */}
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.password_label')}</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="password" type={showPassword ? "text" : "password"} placeholder="••••••••" required
+                                            className="form-input form-input-password pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowPassword(!showPassword)}
+                                            className="absolute right-4 top-1/2 -translate-y-1/2 text-slate-400 hover:text-nature-600 transition-colors z-10"
+                                        >
+                                            {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                                        </button>
+                                    </div>
+                                    <div className="mt-1 h-1.5 w-full bg-slate-100 rounded-full overflow-hidden">
+                                        <motion.div
+                                            initial={{ width: 0 }}
+                                            animate={{ width: `${getPasswordStrength()}%` }}
+                                            className={`h-full transition-all duration-500 ${getPasswordStrength() === 100 ? 'bg-nature-500' : 'bg-yellow-500'}`}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.confirm_password')}</label>
+                                    <div className="relative group">
+                                        <Lock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="confirmPassword" type="password" placeholder="••••••••" required
+                                            className="form-input form-input-password pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
 
-                            <p className="text-center text-slate-500 font-bold pt-6">
-                                Already registered for Intelligence?
-                                <Link to="/login" className="text-nature-600 hover:text-nature-500 ml-2 transition-colors">Log in to Dashboard</Link>
+                                {/* Row 4: Village Name | District */}
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.village')}</label>
+                                    <div className="relative group">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="village" type="text" placeholder="Enter village name" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.district')}</label>
+                                    <div className="relative group">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <select
+                                            name="district" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5 appearance-none"
+                                            onChange={handleChange}
+                                        >
+                                            <option value="">{t('auth.select_district')}</option>
+                                            {MAHARASHTRA_DISTRICTS.map(district => (
+                                                <option key={district} value={district.toLowerCase()}>{district}</option>
+                                            ))}
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Row 5: Farm Location (Village, District, State) (full width) */}
+                                <div className="form-field full-width">
+                                    <label className="label-text">{t('auth.farm_location')}</label>
+                                    <div className="relative group">
+                                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="farm_location" type="text" placeholder="Village name, District, Maharashtra" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Row 6: Total Farm Size | Major Crop Classification */}
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.farm_size')}</label>
+                                    <div className="relative group">
+                                        <Ruler className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <input
+                                            name="farm_size" type="number" placeholder="5.4" step="0.1" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5"
+                                            onChange={handleChange}
+                                        />
+                                    </div>
+                                </div>
+                                <div className="form-field">
+                                    <label className="label-text">{t('auth.crop_class')}</label>
+                                    <div className="relative group">
+                                        <Wheat className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400 group-focus-within:text-nature-600 transition-colors z-10" />
+                                        <select
+                                            name="crop_type" required
+                                            className="form-input pl-12 bg-slate-50 border border-slate-200/60 transition-all duration-300 focus:border-nature-500 focus:bg-white focus:ring-[6px] focus:ring-nature-500/5 appearance-none"
+                                            onChange={handleChange}
+                                        >
+                                            <option value="">{t('auth.select_crop')}</option>
+                                            <option value="Soybean">{t('dashboard.crops.soybean')}</option>
+                                            <option value="Wheat">{t('dashboard.crops.wheat')}</option>
+                                            <option value="Cotton">{t('dashboard.crops.cotton')}</option>
+                                        </select>
+                                    </div>
+                                </div>
+
+                                {/* Row 7: Submit Button (centered full width) */}
+                                <div className="full-width pt-4">
+                                    <button
+                                        type="submit" disabled={isLoading}
+                                        className="w-full btn-primary !py-4 text-lg flex items-center justify-center gap-4 group"
+                                    >
+                                        {isLoading ? (
+                                            <span className="flex items-center gap-3">
+                                                <div className="w-6 h-6 border-4 border-white/30 border-t-white rounded-full animate-spin" />
+                                                {t('auth.creating_profile')}
+                                            </span>
+                                        ) : (
+                                            <>
+                                                {t('auth.complete_reg')}
+                                                <ChevronRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
+                                            </>
+                                        )}
+                                    </button>
+                                </div>
+                            </div>
+
+                            <p className="text-center text-slate-500 font-bold pt-4">
+                                {t('auth.already_registered')}
+                                <Link to="/login" className="text-nature-600 hover:text-nature-500 ml-2 transition-colors">{t('auth.login_link')}</Link>
                             </p>
                         </form>
                     </motion.div>

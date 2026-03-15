@@ -1,5 +1,5 @@
 import random
-from datetime import datetime, timedelta
+from datetime import datetime, date, timedelta
 from rest_framework.views import APIView
 from rest_framework.response import Response
 from rest_framework.permissions import IsAuthenticated
@@ -10,29 +10,46 @@ class FarmingCalendarView(APIView):
 
     def get(self, request):
         user = request.user
-        crop_type = user.crop_type or "Soybean"
-        sowing_date_str = user.planting_date
+        crop_type = getattr(user, 'crop_type', None)
+        sowing_date_val = getattr(user, 'planting_date', None)
         
-        if not sowing_date_str:
-            # For demo, if not set, assume 15 days ago
-            sowing_date = datetime.now().date() - timedelta(days=15)
-        else:
-            if isinstance(sowing_date_str, str):
-                sowing_date = datetime.strptime(sowing_date_str, '%Y-%m-%d').date()
+        print(f"DEBUG: FarmingCalendarView - crop_type: {crop_type}, sowing_date: {sowing_date_val}")
+
+        # Check if crop details are set
+        if not crop_type or not sowing_date_val:
+            return Response({
+                "crop": crop_type,
+                "sowing_date": str(sowing_date_val) if sowing_date_val else None,
+                "is_setup_complete": False,
+                "message": "Please set crop type and sowing date in your profile to generate your farming calendar.",
+                "tasks": []
+            }, status=status.HTTP_200_OK)
+
+        try:
+            if isinstance(sowing_date_val, str):
+                sowing_date = datetime.strptime(sowing_date_val, '%Y-%m-%d').date()
+            elif isinstance(sowing_date_val, datetime):
+                sowing_date = sowing_date_val.date()
+            elif isinstance(sowing_date_val, date):
+                sowing_date = sowing_date_val
             else:
-                sowing_date = sowing_date_str
+                # Fallback to current date if type is unknown but not None
+                print(f"DEBUG: Unknown date type: {type(sowing_date_val)}")
+                sowing_date = date.today()
+        except Exception as e:
+            print(f"DEBUG: Date processing error: {e}")
+            sowing_date = date.today()
 
         # Define crop cycles (Day offsets from sowing)
         CROP_CYCLES = {
             "Soybean": [
                 {"day": 1, "task": "Sowing", "icon": "🌱", "desc": "Sow seeds at 2-3cm depth"},
-                {"day": 15, "task": "Initial Irrigation", "icon": "💧", "desc": "Provide light watering for germination"},
-                {"day": 30, "task": "Fertilizer Application", "icon": "🧪", "desc": "Apply NPK (20:20:20) mix"},
+                {"day": 10, "task": "First Irrigation", "icon": "💧", "desc": "Provide light watering for germination"},
+                {"day": 20, "task": "Fertilizer Application", "icon": "🧪", "desc": "Apply NPK (20:20:20) mix"},
+                {"day": 30, "task": "Weed Control", "icon": "🌿", "desc": "Manual weeding or selective herbicide"},
                 {"day": 45, "task": "Pest Monitoring", "icon": "🐛", "desc": "Check for Aphids and Stem Fly"},
-                {"day": 60, "task": "Weed Control", "icon": "🌿", "desc": "Manual weeding or selective herbicide"},
-                {"day": 75, "task": "Secondary Irrigation", "icon": "💧", "desc": "Ensure moisture during pod filling"},
-                {"day": 90, "task": "Harvest Preparation", "icon": "🌾", "desc": "Monitor moisture content for harvest"},
-                {"day": 105, "task": "Harvesting", "icon": "🚜", "desc": "Harvest when 90% of pods are brown"}
+                {"day": 60, "task": "Second Fertilizer Application", "icon": "🧪", "desc": "Top dressing for pod development"},
+                {"day": 90, "task": "Harvest Preparation", "icon": "🌾", "desc": "Monitor moisture content for harvest"}
             ],
             "Wheat": [
                 {"day": 1, "task": "Sowing", "icon": "🌱", "desc": "Drill sowing with fertilizer"},
@@ -55,8 +72,13 @@ class FarmingCalendarView(APIView):
             ]
         }
 
+        # Normalize crop type for matching
+        normalized_crop = (crop_type or "").strip().capitalize()
+        if normalized_crop.endswith('s'): # Handle "Soybeans" -> "Soybean"
+            normalized_crop = normalized_crop[:-1]
+
         # Select cycle or default to Soybean
-        base_tasks = CROP_CYCLES.get(crop_type, CROP_CYCLES["Soybean"])
+        base_tasks = CROP_CYCLES.get(normalized_crop, CROP_CYCLES["Soybean"])
         
         # Mock weather data for adjustment
         # In real scenario, fetch from weather service
@@ -68,17 +90,17 @@ class FarmingCalendarView(APIView):
         
         for base in base_tasks:
             task_date = sowing_date + timedelta(days=base["day"] - 1)
-            status = "Completed" if task_date < today else "Upcoming"
+            task_status = "Completed" if task_date < today else "Upcoming"
             
             # AI Adjustments
             current_action = base["desc"]
             adjustment = None
             
-            if base["task"] == "Initial Irrigation" or base["task"] == "Secondary Irrigation" or "irrigation" in base["task"].lower():
+            if "irrigation" in base["task"].lower():
                 if rain_prob > 60:
-                    adjustment = "Rain predicted (>60%). Delaying scheduled irrigation to prevent waterlogging."
+                    adjustment = "High rain probability detected (>60%). Delaying scheduled irrigation."
                 elif temp > 38:
-                    adjustment = "High temperature detected. Recommend increasing water volume by 20%."
+                    adjustment = "Very high temperature detected. Recommend additional irrigation."
             
             if "Fertilizer" in base["task"] and rain_prob > 70:
                 adjustment = "Heavy rain expected. Postpone fertilizer application to avoid runoff."
@@ -90,17 +112,26 @@ class FarmingCalendarView(APIView):
                 "icon": base["icon"],
                 "action": current_action,
                 "ai_adjustment": adjustment,
-                "status": status,
-                "is_critical": base["day"] in [1, 90, 140] or "Critical" in base["desc"]
+                "status": task_status,
+                "is_critical": base["day"] in [1, 21, 90, 100]
             })
+
+        try:
+            current_day = (date.today() - sowing_date).days + 1
+        except Exception as e:
+            print(f"DEBUG: current_day calculation error: {e}")
+            current_day = 1
 
         return Response({
             "crop": crop_type,
-            "sowing_date": sowing_date.strftime('%Y-%m-%d'),
-            "current_day": (today - sowing_date).days + 1,
+            "sowing_date": sowing_date.strftime('%Y-%m-%d') if sowing_date else None,
+            "is_setup_complete": True,
+            "current_day": current_day,
             "weather_context": {
                 "rain_prob": rain_prob,
                 "temp": temp
             },
             "tasks": tasks_with_dates
         }, status=status.HTTP_200_OK)
+
+

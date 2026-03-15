@@ -1,28 +1,37 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
 import { Link } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
+import { useLanguage } from "../context/LanguageContext";
 import {
-    LayoutDashboard, Cloud, Activity, AlertTriangle, Sprout, Leaf, Bug, ShieldAlert, ArrowRight, Beaker, Droplets, Briefcase
+    LayoutDashboard, Cloud, Activity, AlertTriangle, Leaf, Bug, ShieldAlert, ArrowRight, Beaker, Droplets, Briefcase, MapPin
 } from "lucide-react";
 import {
     BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis, Radar
 } from 'recharts';
 
 const RiskAnalytics = () => {
+    const { t } = useLanguage();
     const [data, setData] = useState<any>(null);
+    const [disasterAlerts, setDisasterAlerts] = useState<any[]>([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8000/api/risk/analysis", {
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-                setData(res.data);
+                const [riskRes, disasterRes] = await Promise.all([
+                    axios.get("http://localhost:8000/api/risk/analysis", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get("http://localhost:8000/api/weather/disaster-alerts/", {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+                setData(riskRes.data);
+                setDisasterAlerts(disasterRes.data);
             } catch (err) {
-                console.error("Failed to fetch risk analytics", err);
+                console.error("Failed to fetch risk data", err);
             } finally {
                 setLoading(false);
             }
@@ -87,6 +96,66 @@ const RiskAnalytics = () => {
                         </div>
                     </div>
                 </header>
+
+                {/* Real-time Disaster Alerts */}
+                <section className="mb-12">
+                    <div className="flex items-center gap-4 mb-6">
+                        <div className="w-10 h-10 bg-red-600 rounded-xl flex items-center justify-center shadow-lg shadow-red-600/20">
+                            <ShieldAlert className="text-white w-6 h-6" />
+                        </div>
+                        <div>
+                            <h3 className="font-black text-xl text-slate-900 tracking-tight">{t('alerts.title')}</h3>
+                            <p className="text-[10px] text-slate-500 font-bold uppercase tracking-widest">Live Climate Hazard Monitoring</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                        <AnimatePresence>
+                            {disasterAlerts.map((alert, idx) => (
+                                <motion.div
+                                    key={`${alert.type}-${idx}`}
+                                    initial={{ opacity: 0, y: 20 }}
+                                    animate={{ opacity: 1, y: 0 }}
+                                    exit={{ opacity: 0, scale: 0.95 }}
+                                    transition={{ delay: idx * 0.1 }}
+                                    className={`modern-card p-6 border-l-4 group hover:scale-[1.02] transition-all ${
+                                        alert.severity === 'red' ? 'border-l-red-600 bg-red-50/30' : 
+                                        alert.severity === 'yellow' ? 'border-l-amber-500 bg-amber-50/30' : 
+                                        'border-l-nature-500 bg-nature-50/30'
+                                    }`}
+                                >
+                                    <div className="flex items-start justify-between mb-4">
+                                        <div className={`p-3 rounded-xl ${
+                                            alert.severity === 'red' ? 'bg-red-100 text-red-600' : 
+                                            alert.severity === 'yellow' ? 'bg-amber-100 text-amber-600' : 
+                                            'bg-nature-100 text-nature-600'
+                                        }`}>
+                                            <AlertTriangle className="w-5 h-5" />
+                                        </div>
+                                        <span className={`text-[8px] font-black px-2.5 py-1 rounded-full uppercase tracking-widest ${
+                                            alert.severity === 'red' ? 'bg-red-600 text-white' : 
+                                            alert.severity === 'yellow' ? 'bg-amber-500 text-white' : 
+                                            'bg-nature-500 text-white'
+                                        }`}>
+                                            {t(`alerts.severity.${alert.severity === 'red' ? 'severe' : alert.severity === 'yellow' ? 'moderate' : 'safe'}`)}
+                                        </span>
+                                    </div>
+                                    <h4 className="text-lg font-black text-slate-900 mb-2">{alert.type}</h4>
+                                    <p className="text-sm text-slate-600 font-bold mb-6 leading-relaxed">
+                                        {t(`alerts.${alert.message}`)}
+                                    </p>
+                                    <div className="pt-4 border-t border-slate-200/50 flex items-center justify-between">
+                                        <div className="flex items-center gap-2">
+                                            <div className="w-1.5 h-1.5 rounded-full bg-slate-400" />
+                                            <span className="text-[10px] font-black text-slate-400 uppercase tracking-widest leading-none">Recommended Action</span>
+                                        </div>
+                                        <p className="text-xs font-black text-slate-900 italic">{t(`alerts.actions.${alert.action}`)}</p>
+                                    </div>
+                                </motion.div>
+                            ))}
+                        </AnimatePresence>
+                    </div>
+                </section>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
                     {data?.risks.map((risk: any, i: number) => (

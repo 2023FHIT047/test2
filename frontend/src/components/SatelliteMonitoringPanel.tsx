@@ -1,10 +1,11 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap, Circle } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
-import { Loader2, Satellite, Activity, Droplets, Info, MapPin, Navigation } from 'lucide-react';
+import { MapPin, Satellite, Info, Activity, Droplets, RefreshCw, Navigation } from 'lucide-react';
 import axios from 'axios';
 import { motion } from 'framer-motion';
+import { useLanguage } from '../context/LanguageContext';
 
 // Fix for default marker icons in Leaflet with bundlers
 import icon from 'leaflet/dist/images/marker-icon.png';
@@ -13,6 +14,7 @@ import iconShadow from 'leaflet/dist/images/marker-shadow.png';
 let DefaultIcon = L.icon({
     iconUrl: icon,
     shadowUrl: iconShadow,
+    iconSize: [25, 41],
     iconAnchor: [12, 41]
 });
 L.Marker.prototype.options.icon = DefaultIcon;
@@ -26,21 +28,28 @@ const MapUpdater = ({ center }: { center: [number, number] }) => {
 };
 
 const SatelliteMonitoringPanel = () => {
+    const { t } = useLanguage();
     const [loading, setLoading] = useState(true);
     const [data, setData] = useState<any>(null);
+    const [summaryData, setSummaryData] = useState<any>(null);
     const [error, setError] = useState<string | null>(null);
     const [hoveredNdvi, setHoveredNdvi] = useState<number | null>(null);
+    const [isDownloading, setIsDownloading] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
             try {
-                // Use relative URL to let proxy handle it or absolute if needed
-                const response = await axios.get('http://localhost:8000/api/satellite/crop-health', {
-                    headers: { 
-                        Authorization: `Bearer ${localStorage.getItem('access_token') || localStorage.getItem('token')}` 
-                    }
-                });
-                setData(response.data);
+                const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+                const [satRes, summaryRes] = await Promise.all([
+                    axios.get('http://localhost:8000/api/satellite/crop-health', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    }),
+                    axios.get('http://localhost:8000/api/crop/summary', {
+                        headers: { Authorization: `Bearer ${token}` }
+                    })
+                ]);
+                setData(satRes.data);
+                setSummaryData(summaryRes.data);
             } catch (err) {
                 console.error("Error fetching satellite data:", err);
                 setError("Failed to load satellite insights.");
@@ -51,11 +60,36 @@ const SatelliteMonitoringPanel = () => {
         fetchData();
     }, []);
 
+    const handleDownloadPDF = async () => {
+        setIsDownloading(true);
+        try {
+            const token = localStorage.getItem('access_token') || localStorage.getItem('token');
+            const response = await axios.get('http://localhost:8000/api/crop-report', {
+                headers: { Authorization: `Bearer ${token}` },
+                responseType: 'blob'
+            });
+
+            const url = window.URL.createObjectURL(new Blob([response.data]));
+            const link = document.createElement('a');
+            link.href = url;
+            const cropName = summaryData?.crop || 'Crop';
+            link.setAttribute('download', `KrushiSarthi_Crop_Report_${cropName}.pdf`);
+            document.body.appendChild(link);
+            link.click();
+            link.remove();
+        } catch (err) {
+            console.error("PDF Download failed:", err);
+            alert("Failed to generate report. Please try again.");
+        } finally {
+            setIsDownloading(false);
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex flex-col items-center justify-center p-12 bg-white rounded-3xl border border-slate-100 shadow-sm">
-                <Loader2 className="w-12 h-12 animate-spin text-emerald-600 mb-4" />
-                <p className="text-slate-500 font-medium">Analyzing satellite imagery from Sentinel-2 & Landsat...</p>
+                <RefreshCw className="w-12 h-12 animate-spin text-emerald-600 mb-4" />
+                <p className="text-slate-500 font-medium">{t('satellite.loading_message')}</p>
             </div>
         );
     }
@@ -66,15 +100,15 @@ const SatelliteMonitoringPanel = () => {
                 <div className="w-20 h-20 bg-white rounded-3xl flex items-center justify-center shadow-sm mb-6">
                     <MapPin className="w-10 h-10 text-slate-400" />
                 </div>
-                <h3 className="text-xl font-black text-slate-800 mb-3">Location Not Set</h3>
+                <h3 className="text-xl font-black text-slate-800 mb-3">{t('satellite.location_not_set_title')}</h3>
                 <p className="text-slate-500 font-medium mb-8 max-w-sm">
-                    Please set your farm location to view satellite monitoring and vegetation health analysis.
+                    {t('satellite.location_not_set_description')}
                 </p>
-                <button 
+                <button
                     onClick={() => window.location.href = '/setup-location'}
                     className="px-8 py-4 bg-emerald-600 text-white rounded-2xl font-black hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-900/20 flex items-center gap-2"
                 >
-                    <Navigation className="w-5 h-5" /> Locate Farm
+                    <Navigation className="w-5 h-5" /> {t('satellite.locate_farm_button')}
                 </button>
             </div>
         );
@@ -105,15 +139,15 @@ const SatelliteMonitoringPanel = () => {
                 <div className="flex-[5] bg-white rounded-3xl border border-slate-200 overflow-hidden shadow-sm">
                     <div className="p-5 border-b border-slate-100 flex items-center justify-between bg-slate-50/50">
                         <div className="flex flex-col">
-                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">Live Feed</p>
+                            <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-1">{t('satellite.live_feed')}</p>
                             <div className="flex items-center gap-2">
                                 <Satellite className="w-5 h-5 text-emerald-600" />
-                                <h3 className="font-bold text-slate-800 font-brand">Satellite monitoring for your farm location</h3>
+                                <h3 className="font-bold text-slate-800 font-brand">{t('satellite.monitoring_title')}</h3>
                             </div>
                         </div>
                         <div className="hidden sm:flex items-center gap-2 text-[10px] font-black uppercase tracking-widest px-3 py-1 bg-emerald-100 text-emerald-700 rounded-full">
                             <span className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                            Multi-Spectral Analysis
+                            {t('satellite.multi_spectral_analysis')}
                         </div>
                     </div>
                     <div className="h-[450px] w-full relative z-0">
@@ -127,7 +161,7 @@ const SatelliteMonitoringPanel = () => {
                                 attribution='Tiles &copy; Esri &mdash; Source: Esri, i-cubed, USDA, USGS, AEX, GeoEye, Getmapping, Aerogrid, IGN, IGP, UPR-EBP, and the GIS User Community'
                                 url="https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}"
                             />
-                            
+
                             {/* Simulated NDVI Grid Overlays */}
                             {data.grid_data?.map((point: any, index: number) => (
                                 <Circle
@@ -147,7 +181,7 @@ const SatelliteMonitoringPanel = () => {
                                 >
                                     <Popup>
                                         <div className="p-1">
-                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">Vegetation Health</p>
+                                            <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{t('satellite.vegetation_health')}</p>
                                             <p className="text-sm font-black text-slate-800">NDVI: {point.ndvi}</p>
                                         </div>
                                     </Popup>
@@ -157,44 +191,44 @@ const SatelliteMonitoringPanel = () => {
                             <Marker position={[data.latitude, data.longitude]}>
                                 <Popup>
                                     <div className="p-2">
-                                        <p className="font-bold text-slate-800">Your Farm Location</p>
+                                        <p className="font-bold text-slate-800">{t('satellite.farm_location_marker')}</p>
                                         <p className="text-xs text-slate-500 font-medium">Lat: {data.latitude.toFixed(4)}, Lon: {data.longitude.toFixed(4)}</p>
                                     </div>
                                 </Popup>
                             </Marker>
                             <MapUpdater center={[data.latitude, data.longitude]} />
                         </MapContainer>
-                        
+
                         {/* Status Overlay */}
                         {hoveredNdvi !== null && (
                             <div className="absolute top-4 left-4 z-[1000] bg-white/95 backdrop-blur-md px-4 py-2 rounded-2xl border border-slate-200 shadow-xl">
-                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">Point NDVI</p>
+                                <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-0.5">{t('satellite.point_ndvi')}</p>
                                 <p className="text-xl font-black text-slate-800">{hoveredNdvi}</p>
                             </div>
                         )}
-                        
+
                         {/* Map Legend */}
                         <div className="absolute top-4 right-4 z-[1000] bg-white/95 backdrop-blur-md p-4 rounded-2xl border border-slate-200 shadow-xl text-[10px] space-y-3 min-w-[150px]">
-                            <p className="font-black text-slate-900 uppercase tracking-wider mb-2">NDVI Scale</p>
+                            <p className="font-black text-slate-900 uppercase tracking-wider mb-2">{t('satellite.ndvi_scale')}</p>
                             <div className="space-y-2">
                                 <div className="flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-emerald-500 rounded-sm" />
-                                        <span className="font-bold">Healthy</span>
+                                        <span className="font-bold">{t('satellite.healthy')}</span>
                                     </div>
                                     <span className="text-slate-400">0.7 - 1.0</span>
                                 </div>
                                 <div className="flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-amber-500 rounded-sm" />
-                                        <span className="font-bold">Moderate</span>
+                                        <span className="font-bold">{t('satellite.moderate')}</span>
                                     </div>
                                     <span className="text-slate-400">0.4 - 0.6</span>
                                 </div>
                                 <div className="flex items-center justify-between gap-3">
                                     <div className="flex items-center gap-2">
                                         <div className="w-3 h-3 bg-red-500 rounded-sm" />
-                                        <span className="font-bold">Stressed</span>
+                                        <span className="font-bold">{t('satellite.stressed')}</span>
                                     </div>
                                     <span className="text-slate-400">0.0 - 0.3</span>
                                 </div>
@@ -204,7 +238,7 @@ const SatelliteMonitoringPanel = () => {
                         {/* Hover Tooltip/Info */}
                         <div className="absolute bottom-4 left-4 z-[1000] bg-slate-900/90 backdrop-blur-md px-4 py-2 rounded-full border border-white/10 shadow-emerald-500/20 shadow-lg flex items-center gap-3">
                             <Info className="w-4 h-4 text-emerald-400" />
-                            <p className="text-[11px] text-white font-medium">Hover over map areas for point-level NDVI data</p>
+                            <p className="text-[11px] text-white font-medium">{t('satellite.hover_info')}</p>
                         </div>
                     </div>
                 </div>
@@ -212,7 +246,7 @@ const SatelliteMonitoringPanel = () => {
                 {/* Analytics Side Panel */}
                 <div className="flex-[2] flex flex-col gap-4">
                     {/* Health Score Card */}
-                    <motion.div 
+                    <motion.div
                         initial={{ opacity: 0, y: 20 }}
                         animate={{ opacity: 1, y: 0 }}
                         className={`p-6 rounded-[2rem] border-2 ${getNDVIColor(data.ndvi)} shadow-lg shadow-emerald-500/5`}
@@ -221,12 +255,12 @@ const SatelliteMonitoringPanel = () => {
                             <div className="w-10 h-10 rounded-xl bg-white/50 flex items-center justify-center">
                                 <Activity className="w-5 h-5" />
                             </div>
-                            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">Vegetation Health Index</span>
+                            <span className="text-[10px] font-black uppercase tracking-widest opacity-60">{t('satellite.vegetation_health_index')}</span>
                         </div>
-                        
+
                         <div className="space-y-4">
                             <div>
-                                <p className="text-xs font-bold uppercase tracking-wider mb-1 opacity-70">Current NDVI Score</p>
+                                <p className="text-xs font-bold uppercase tracking-wider mb-1 opacity-70">{t('satellite.current_ndvi_score')}</p>
                                 <div className="flex items-baseline gap-2">
                                     <h4 className="text-5xl font-black">{data.ndvi}</h4>
                                     <span className="text-sm font-bold opacity-60">/ 1.0</span>
@@ -235,12 +269,12 @@ const SatelliteMonitoringPanel = () => {
 
                             <div className="space-y-2">
                                 <div className="flex justify-between text-[10px] font-bold">
-                                    <span>Poor</span>
-                                    <span>Neutral</span>
-                                    <span>Healthy</span>
+                                    <span>{t('satellite.poor')}</span>
+                                    <span>{t('satellite.neutral')}</span>
+                                    <span>{t('satellite.healthy')}</span>
                                 </div>
                                 <div className="w-full h-3 bg-black/5 rounded-full p-0.5">
-                                    <motion.div 
+                                    <motion.div
                                         initial={{ width: 0 }}
                                         animate={{ width: `${data.ndvi * 100}%` }}
                                         transition={{ duration: 1.5, ease: "easeOut" }}
@@ -251,7 +285,7 @@ const SatelliteMonitoringPanel = () => {
 
                             <div className="pt-2">
                                 <p className="text-xs font-bold leading-relaxed">
-                                    State: <span className="uppercase">{data.crop_health}</span>
+                                    {t('satellite.state')}: <span className="uppercase">{data.crop_health}</span>
                                 </p>
                             </div>
                         </div>
@@ -265,7 +299,7 @@ const SatelliteMonitoringPanel = () => {
                                     <Droplets className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Drought Risk</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">{t('satellite.drought_risk')}</p>
                                     <p className={`text-lg font-black ${data.drought_risk === 'High' ? 'text-red-600' : 'text-emerald-600'}`}>
                                         {data.drought_risk}
                                     </p>
@@ -282,7 +316,7 @@ const SatelliteMonitoringPanel = () => {
                                     <Activity className="w-6 h-6" />
                                 </div>
                                 <div>
-                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">Chlorophyll Level</p>
+                                    <p className="text-[10px] text-slate-400 font-black uppercase tracking-wider">{t('satellite.chlorophyll_level')}</p>
                                     <p className="text-lg font-black text-slate-800">
                                         {(data.ndvi * 1.2).toFixed(1)} <span className="text-xs font-normal text-slate-400">mg/m²</span>
                                     </p>
@@ -296,10 +330,9 @@ const SatelliteMonitoringPanel = () => {
                                     <Satellite className="w-5 h-5" />
                                 </div>
                                 <div className="flex-1">
-                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-1">Observation Details</p>
+                                    <p className="text-[10px] text-slate-500 font-black uppercase tracking-wider mb-1">{t('satellite.observation_details')}</p>
                                     <p className="text-[11px] font-medium text-slate-600 leading-normal">
-                                        Data combined from <span className="font-bold">ESA Sentinel-2B</span> and <span className="font-bold">Landsat 9</span>. 
-                                        Last pixel-clearing cloud mask applied 4h ago.
+                                        {t('satellite.observation_description')}
                                     </p>
                                 </div>
                             </div>
@@ -309,7 +342,7 @@ const SatelliteMonitoringPanel = () => {
             </div>
 
             {/* AI Summary Banner */}
-            <motion.div 
+            <motion.div
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 className="bg-gradient-to-r from-emerald-600 to-teal-700 p-8 rounded-[2.5rem] text-white shadow-xl relative overflow-hidden"
@@ -317,24 +350,32 @@ const SatelliteMonitoringPanel = () => {
                 <div className="absolute right-0 top-0 h-full w-1/3 opacity-10 pointer-events-none">
                     <Satellite className="w-64 h-64 -mr-20 -mt-10 rotate-12" />
                 </div>
-                
+
                 <div className="relative z-10 flex flex-col md:flex-row items-center gap-8">
                     <div className="w-20 h-20 bg-white/20 backdrop-blur-md rounded-3xl flex items-center justify-center shrink-0 border border-white/30">
                         <Activity className="w-10 h-10 text-emerald-300" />
                     </div>
                     <div>
                         <h4 className="text-xl font-black mb-2 flex items-center gap-2">
-                            AI-Powered Crop Summary
+                            {t('satellite.ai_summary_title')}: <span className="text-emerald-200">{summaryData?.crop || 'Analyzing...'}</span>
                         </h4>
                         <p className="text-emerald-50/80 leading-relaxed font-medium">
-                            The multi-spectral analysis indicates <span className="text-white font-bold">{data.vegetation_status.toLowerCase()}</span>. 
-                            Your vegetation health score is higher than 78% of similar farms in your region. 
-                            No immediate irrigation adjustment is required based on current drought risk indices.
+                            {summaryData?.summary || `The multi-spectral analysis indicates ${data.vegetation_status.toLowerCase()}. Your vegetation health score is higher than 78% of similar farms in your region.`}
                         </p>
                     </div>
                     <div className="md:ml-auto">
-                        <button className="whitespace-nowrap px-8 py-4 bg-white text-emerald-700 font-black rounded-2xl hover:bg-emerald-50 transition-all shadow-lg shadow-emerald-900/40">
-                            Download Detailed PDF
+                        <button
+                            onClick={handleDownloadPDF}
+                            disabled={isDownloading}
+                            className="w-full py-4 bg-emerald-400 hover:bg-emerald-500 text-slate-900 font-bold rounded-2xl transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center gap-2 disabled:opacity-50"
+                        >
+                            {isDownloading ? (
+                                <>
+                                    <RefreshCw className="w-4 h-4 animate-spin" /> {t('satellite.processing')}
+                                </>
+                            ) : (
+                                t('satellite.download_pdf')
+                            )}
                         </button>
                     </div>
                 </div>

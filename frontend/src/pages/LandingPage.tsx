@@ -1,10 +1,13 @@
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
+import { useState, useRef } from "react";
+import { useLanguage } from "../context/LanguageContext";
+import Logo from "../components/Logo";
 import {
-    Cloud, Sprout, TrendingUp, MapPin, Bell, Leaf,
-    ArrowRight, Star, ShieldCheck, Sun, Droplets, CheckCircle2, Wheat, Bug, Beaker, Play, ChevronRight, Menu, X, Phone, Mail, Instagram, Twitter, Linkedin, Check, XCircle, Landmark, HandCoins, ExternalLink
+    TrendingUp, MapPin, Bell, Leaf,
+    ArrowRight, Star, ShieldCheck, Sun, Droplets, CheckCircle2, Wheat, Bug, Beaker, Play, ChevronRight, Menu, X, Phone, Mail, Instagram, Twitter, Linkedin, Check, XCircle, Landmark, HandCoins, ExternalLink,
+    Globe
 } from "lucide-react";
-import { useState } from "react";
 import InteractiveWeatherMap from "../components/InteractiveWeatherMap";
 
 /* ─── Helper Components ─────────────────────────────────────────────── */
@@ -13,19 +16,20 @@ const SectionHeader = ({ subtitle, title, description, center = false }: { subti
     <div className={`mb-12 ${center ? 'text-center max-w-3xl mx-auto' : ''}`}>
         {subtitle && (
             <motion.span
-                initial={{ opacity: 0, y: 10 }}
-                whileInView={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, scale: 0.9 }}
+                whileInView={{ opacity: 1, scale: 1 }}
                 viewport={{ once: true }}
-                className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-emerald-100 text-emerald-700 text-sm font-semibold mb-4"
+                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-forest-50 text-forest-700 text-xs font-black uppercase tracking-widest mb-4 border border-forest-100/50 shadow-sm"
             >
                 {subtitle}
             </motion.span>
         )}
         <motion.h2
-            initial={{ opacity: 0, y: 20 }}
+            initial={{ opacity: 0, y: 30 }}
             whileInView={{ opacity: 1, y: 0 }}
             viewport={{ once: true }}
-            className="text-3xl md:text-4xl font-bold text-slate-900 mb-4"
+            transition={{ duration: 0.8, ease: "easeOut" }}
+            className="text-4xl md:text-5xl font-black text-slate-900 mb-6 tracking-tight"
         >
             {title}
         </motion.h2>
@@ -45,32 +49,33 @@ const SectionHeader = ({ subtitle, title, description, center = false }: { subti
 
 const FeatureCard = ({ icon, title, description, delay }: { icon: React.ReactNode; title: string; description: string; delay: number }) => (
     <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, scale: 0.95, y: 30 }}
+        whileInView={{ opacity: 1, scale: 1, y: 0 }}
         viewport={{ once: true }}
-        transition={{ duration: 0.5, delay }}
-        className="group p-6 bg-white rounded-2xl border border-slate-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+        transition={{ duration: 0.7, delay, ease: "easeOut" }}
+        className="group p-8 bg-white rounded-3xl border border-slate-100 shadow-sm hover:shadow-2xl hover:-translate-y-2 transition-all duration-500"
     >
-        <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-5 group-hover:bg-emerald-600 group-hover:text-white transition-colors">
+        <div className="w-16 h-16 bg-forest-50 rounded-2xl flex items-center justify-center text-forest-600 mb-7 group-hover:bg-forest-600 group-hover:text-white group-hover:rotate-6 transition-all duration-500">
             {icon}
         </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-3">{title}</h3>
-        <p className="text-slate-600 leading-relaxed">{description}</p>
+        <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{title}</h3>
+        <p className="text-slate-600 leading-relaxed font-medium">{description}</p>
     </motion.div>
 );
 
-const StepItem = ({ number, title, description, icon }: { number: string; title: string; description: string; icon: React.ReactNode }) => (
+const StepItem = ({ title, description, icon }: { title: string; description: string; icon: React.ReactNode }) => (
     <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        whileInView={{ opacity: 1, y: 0 }}
+        initial={{ opacity: 0, x: -20 }}
+        whileInView={{ opacity: 1, x: 0 }}
         viewport={{ once: true }}
+        transition={{ duration: 0.6 }}
         className="relative"
     >
-        <div className="w-16 h-16 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-2xl flex items-center justify-center text-white mb-5 shadow-lg shadow-emerald-500/30">
+        <div className="w-20 h-20 bg-gradient-to-br from-forest-500 to-forest-700 rounded-3xl flex items-center justify-center text-white mb-6 shadow-xl shadow-forest-500/30 transform group-hover:scale-110 transition-transform duration-500">
             {icon}
         </div>
-        <h4 className="text-xl font-bold text-slate-900 mb-3">{title}</h4>
-        <p className="text-slate-600">{description}</p>
+        <h4 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{title}</h4>
+        <p className="text-slate-600 font-medium leading-relaxed">{description}</p>
     </motion.div>
 );
 
@@ -129,62 +134,76 @@ const FAQItem = ({ question, answer }: { question: string; answer: string }) => 
     );
 };
 
-const SchemeCard = ({ scheme, delay }: { scheme: any; delay: number }) => (
-    <motion.div
-        initial={{ opacity: 0, y: 30 }}
-        whileInView={{ opacity: 1, y: 0 }}
-        viewport={{ once: true }}
-        transition={{ duration: 0.5, delay }}
-        className="group bg-white rounded-3xl border border-slate-100 p-8 shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-300 flex flex-col h-full"
-    >
-        <div className="w-14 h-14 bg-emerald-50 rounded-2xl flex items-center justify-center text-emerald-600 mb-6 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300">
-            {scheme.icon}
-        </div>
-        <h3 className="text-xl font-bold text-slate-900 mb-3">{scheme.name}</h3>
-        <p className="text-slate-600 mb-6 flex-grow">{scheme.description}</p>
-        
-        <div className="mb-8">
-            <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">Key Benefits</h4>
-            <ul className="space-y-2">
-                {scheme.benefits.map((benefit: string, i: number) => (
-                    <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
-                        <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
-                        {benefit}
-                    </li>
-                ))}
-            </ul>
-        </div>
-        
-        <a 
-            href={scheme.website} 
-            target="_blank" 
-            rel="noopener noreferrer"
-            className="w-full py-4 px-6 bg-slate-50 text-slate-900 font-semibold rounded-2xl flex items-center justify-center gap-2 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300"
+const SchemeCard = ({ scheme, delay }: { scheme: any; delay: number }) => {
+    const { t } = useLanguage();
+    return (
+        <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.7, delay }}
+            className="group bg-white rounded-[2.5rem] border border-slate-100 p-10 shadow-sm hover:shadow-2xl hover:-translate-y-3 transition-all duration-500 flex flex-col h-full"
         >
-            Visit Official Website <ExternalLink className="w-4 h-4" />
-        </a>
-    </motion.div>
-);
+            <div className="w-16 h-16 bg-forest-50 rounded-2xl flex items-center justify-center text-forest-600 mb-8 group-hover:bg-forest-600 group-hover:text-white group-hover:rotate-12 transition-all duration-500 shadow-sm">
+                {scheme.icon}
+            </div>
+            <h3 className="text-2xl font-black text-slate-900 mb-4 tracking-tight">{scheme.name}</h3>
+            <p className="text-slate-600 mb-6 flex-grow">{scheme.description}</p>
+
+            <div className="mb-8">
+                <h4 className="text-sm font-semibold text-slate-900 uppercase tracking-wider mb-3">{t('schemes.benefits')}</h4>
+                <ul className="space-y-2">
+                    {scheme.benefits.map((benefit: string, i: number) => (
+                        <li key={i} className="flex items-start gap-2 text-sm text-slate-600">
+                            <CheckCircle2 className="w-4 h-4 text-emerald-500 mt-0.5 shrink-0" />
+                            {benefit}
+                        </li>
+                    ))}
+                </ul>
+            </div>
+
+            <a
+                href={scheme.website}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="w-full py-4 px-6 bg-slate-50 text-slate-900 font-semibold rounded-2xl flex items-center justify-center gap-2 group-hover:bg-emerald-600 group-hover:text-white transition-all duration-300"
+            >
+                {t('schemes.visit_official')} <ExternalLink className="w-4 h-4" />
+            </a>
+        </motion.div>
+    );
+};
 
 /* ─── Main Page ──────────────────────────────────────────────────────── */
 
 const LandingPage = () => {
+    const { language, setLanguage, t } = useLanguage();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+    const [langMenuOpen, setLangMenuOpen] = useState(false);
+    const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+    const scroll = (direction: 'left' | 'right') => {
+        if (scrollContainerRef.current) {
+            const { scrollLeft, clientWidth } = scrollContainerRef.current;
+            const scrollTo = direction === 'left' ? scrollLeft - clientWidth : scrollLeft + clientWidth;
+            scrollContainerRef.current.scrollTo({ left: scrollTo, behavior: 'smooth' });
+        }
+    };
 
     const features = [
-        { icon: <Sun className="w-7 h-7" />, title: "Weather Forecasting", description: "Hyper-local hourly forecasts powered by satellite data and ML models for your exact location." },
-        { icon: <ShieldCheck className="w-7 h-7" />, title: "Risk Prediction", description: "AI-powered crop risk assessment using Random Forest & XGBoost for weather-related damage." },
-        { icon: <Leaf className="w-7 h-7" />, title: "Crop Advisory", description: "Smart recommendations for irrigation, fertilization, and pest control based on real-time data." },
-        { icon: <Bug className="w-7 h-7" />, title: "Pest Detection", description: "Predict pest and disease outbreaks by analyzing humidity, temperature, and weather patterns." },
-        { icon: <Bell className="w-7 h-7" />, title: "Smart Alerts", description: "Instant notifications for storms, heatwaves, drought, and frost via SMS and push alerts." },
-        { icon: <MapPin className="w-7 h-7" />, title: "Farm Mapping", description: "Interactive maps with rain heatmaps, wind direction, and soil moisture layers." },
+        { icon: <Sun className="w-7 h-7" />, title: t('features.weather.title'), description: t('features.weather.desc') },
+        { icon: <ShieldCheck className="w-7 h-7" />, title: t('features.risk.title'), description: t('features.risk.desc') },
+        { icon: <Leaf className="w-7 h-7" />, title: t('features.advisory.title'), description: t('features.advisory.desc') },
+        { icon: <Bug className="w-7 h-7" />, title: t('features.pests.title'), description: t('features.pests.desc') },
+        { icon: <Bell className="w-7 h-7" />, title: t('features.alerts.title'), description: t('features.alerts.desc') },
+        { icon: <MapPin className="w-7 h-7" />, title: t('features.mapping.title'), description: t('features.mapping.desc') },
     ];
 
     const steps = [
-        { number: "1", title: "Pin Your Farm", description: "Enter your village location or use GPS to set your farm's exact coordinates on the map.", icon: <MapPin className="w-8 h-8" /> },
-        { number: "2", title: "Add Your Crops", description: "Tell us what you grow - we customize every alert and advisory for your specific crops.", icon: <Wheat className="w-8 h-8" /> },
-        { number: "3", title: "Get Live Alerts", description: "Receive real-time notifications for any weather event that could affect your field.", icon: <Bell className="w-8 h-8" /> },
-        { number: "4", title: "Boost Your Yield", description: "Use data-driven insights to make smarter decisions and maximize farm profitability.", icon: <TrendingUp className="w-8 h-8" /> },
+        { number: "1", title: t('how_it_works.step1.title'), description: t('how_it_works.step1.desc'), icon: <MapPin className="w-8 h-8" /> },
+        { number: "2", title: t('how_it_works.step2.title'), description: t('how_it_works.step2.desc'), icon: <Wheat className="w-8 h-8" /> },
+        { number: "3", title: t('how_it_works.step3.title'), description: t('how_it_works.step3.desc'), icon: <Bell className="w-8 h-8" /> },
+        { number: "4", title: t('how_it_works.step4.title'), description: t('how_it_works.step4.desc'), icon: <TrendingUp className="w-8 h-8" /> },
     ];
 
     const schemesList = [
@@ -226,16 +245,16 @@ const LandingPage = () => {
     ];
 
     const testimonials = [
-        { name: "Ramesh Singh", role: "Wheat Farmer, Madhya Pradesh", content: "AgroCast helped me save my wheat crop during an unexpected heatwave. The 6-hour advance warning gave me time to irrigate and protect my harvest.", avatar: "R" },
-        { name: "Priya Devi", role: "Vegetable Grower, Maharashtra", content: "The pest prediction feature is incredible! I was able to prevent a fungal outbreak in my tomato crop before it spread. Highly recommended for all farmers.", avatar: "P" },
-        { name: "Suresh Kumar", role: "Rice Farmer, Tamil Nadu", content: "The weather forecasts are so accurate for my village. I've reduced my irrigation costs by 40% and improved my rice yield significantly.", avatar: "S" },
+        { name: t('testimonials.t1.name'), role: t('testimonials.t1.role'), content: t('testimonials.t1.content'), avatar: "R" },
+        { name: t('testimonials.t2.name'), role: t('testimonials.t2.role'), content: t('testimonials.t2.content'), avatar: "P" },
+        { name: t('testimonials.t3.name'), role: t('testimonials.t3.role'), content: t('testimonials.t3.content'), avatar: "S" },
     ];
 
     // Disease-specific Do's and Don'ts with exact disease images
     const diseases = [
         {
-            name: "Blast Disease",
-            image: "https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.blast'),
+            image: "/images/diseases/blast.png",
             dos: [
                 "Apply nitrogen fertilizer in split doses",
                 "Maintain proper plant spacing for airflow",
@@ -251,8 +270,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Bacterial Blight",
-            image: "https://images.unsplash.com/photo-1574943320219-553eb213f72d?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.blight'),
+            image: "/images/diseases/blight.png",
             dos: [
                 "Use disease-free seeds and planting material",
                 "Apply copper-based fungicides preventively",
@@ -268,8 +287,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Powdery Mildew",
-            image: "https://images.unsplash.com/photo-1598516082726-253c3014a682?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.mildew'),
+            image: "/images/diseases/mildew.png",
             dos: [
                 "Ensure good air circulation around plants",
                 "Apply sulfur-based fungicides early",
@@ -285,8 +304,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Rust Disease",
-            image: "https://images.unsplash.com/photo-1500651230702-0e2d8a49d4ad?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.rust'),
+            image: "/images/diseases/rust.png",
             dos: [
                 "Apply fungicides at first sign of infection",
                 "Use resistant crop varieties",
@@ -302,8 +321,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Leaf Spot",
-            image: "https://images.unsplash.com/photo-1564894809611-1742fc40ed80?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.leaf_spot'),
+            image: "/images/diseases/leaf_spot.png",
             dos: [
                 "Remove infected leaves promptly",
                 "Apply appropriate fungicides",
@@ -319,8 +338,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Root Rot",
-            image: "https://images.unsplash.com/photo-1416879595882-3373a0480b5b?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.root_rot'),
+            image: "/images/diseases/root_rot.png",
             dos: [
                 "Ensure proper soil drainage",
                 "Use biocontrol agents",
@@ -336,8 +355,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Fungal Infection",
-            image: "https://images.unsplash.com/photo-1591857177580-dc82b9ac4e1e?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.fungal'),
+            image: "/images/diseases/fungal.png",
             dos: [
                 "Use fungicides as recommended",
                 "Remove infected plant parts",
@@ -353,8 +372,8 @@ const LandingPage = () => {
             colorClass: "bg-gray-800"
         },
         {
-            name: "Viral Disease",
-            image: "https://images.unsplash.com/photo-1523348837708-15d4a09cfac2?w=400&h=300&fit=crop",
+            name: t('dos_donts.diseases.viral'),
+            image: "/images/diseases/mosaic.png",
             dos: [
                 "Use virus-free planting material",
                 "Control insect vectors",
@@ -372,10 +391,10 @@ const LandingPage = () => {
     ];
 
     const faqs = [
-        { question: "How does AgroCast help farmers?", answer: "AgroCast provides AI-powered weather forecasts, crop advisories, pest predictions, and smart alerts to help farmers make data-driven decisions and maximize their yields." },
-        { question: "Is AgroCast free to use?", answer: "Yes, AgroCast offers a free starter plan with basic weather forecasts and 5 field alerts per month. You can upgrade to premium plans for advanced features." },
+        { question: "How does KrushiSarthi help farmers?", answer: "KrushiSarthi provides AI-powered weather forecasts, crop advisories, pest predictions, and smart alerts to help farmers make data-driven decisions and maximize their yields." },
+        { question: "Is KrushiSarthi free to use?", answer: "Yes, KrushiSarthi offers a free starter plan with basic weather forecasts and 5 field alerts per month. You can upgrade to premium plans for advanced features." },
         { question: "How accurate are the weather predictions?", answer: "Our weather predictions use advanced ML models and satellite data, providing up to 85% accuracy for hyper-local forecasts." },
-        { question: "Can I use AgroCast in my local language?", answer: "Yes! AgroCast supports multiple Indian languages including Hindi, Marathi, Telugu, and more through our voice assistant feature." },
+        { question: "Can I use KrushiSarthi in my local language?", answer: "Yes! KrushiSarthi supports multiple Indian languages including Hindi, Marathi, Telugu, and more through our voice assistant feature." },
     ];
 
     const videos = [
@@ -388,28 +407,60 @@ const LandingPage = () => {
     return (
         <div className="min-h-screen bg-white">
             {/* ── Navigation ───────────────────────────────────────────────── */}
-            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-slate-100">
+            <nav className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-lg border-b border-slate-100 shadow-sm">
                 <div className="max-w-7xl mx-auto px-4 md:px-6 h-20 flex items-center justify-between">
-                    <Link to="/" className="flex items-center gap-3">
-                        <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                            <Sprout className="text-white w-6 h-6" />
+                    <Link to="/" className="flex items-center gap-3 group">
+                        <div className="w-10 h-10 bg-gradient-to-br from-forest-500 to-forest-700 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
+                            <Logo size={24} />
                         </div>
-                        <span className="text-xl font-bold text-slate-900">AgroCast</span>
+                        <span className="text-xl font-black text-slate-900 tracking-tight">KrushiSarthi</span>
                     </Link>
 
                     <div className="hidden lg:flex items-center gap-8">
-                        <a href="#features" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">Features</a>
-                        <a href="#how-it-works" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">How It Works</a>
-                        <a href="#schemes" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">Schemes</a>
-                        <a href="#dos-donts" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">Do's & Don'ts</a>
-                        <a href="#testimonials" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">Testimonials</a>
-                        <a href="#faq" className="text-slate-600 hover:text-emerald-600 font-medium transition-colors">FAQ</a>
+                        <a href="#features" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.features')}</a>
+                        <a href="#how-it-works" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.how_it_works')}</a>
+                        <a href="#schemes" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.schemes')}</a>
+                        <a href="#dos-donts" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.dos_donts')}</a>
+                        <a href="#testimonials" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.testimonials')}</a>
+                        <a href="#faq" className="text-slate-600 hover:text-forest-600 font-bold transition-colors">{t('nav.faq')}</a>
                     </div>
 
                     <div className="hidden lg:flex items-center gap-4">
-                        <Link to="/login" className="text-slate-600 hover:text-slate-900 font-medium">Login</Link>
-                        <Link to="/register" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-6 py-2.5 rounded-xl font-semibold transition-all shadow-lg shadow-emerald-500/25">
-                            Get Started
+                        {/* Language Selector */}
+                        <div className="relative mr-4">
+                            <button
+                                onClick={() => setLangMenuOpen(!langMenuOpen)}
+                                className="flex items-center gap-2 px-4 py-2 bg-slate-50 hover:bg-slate-100 rounded-xl text-slate-700 font-bold transition-all border border-slate-200"
+                            >
+                                <Globe className="w-4 h-4 text-forest-600" />
+                                <span>{language === 'en' ? 'English' : language === 'mr' ? 'मराठी' : 'हिंदी'}</span>
+                            </button>
+
+                            {langMenuOpen && (
+                                <motion.div
+                                    initial={{ opacity: 0, scale: 0.9, y: 10 }}
+                                    animate={{ opacity: 1, scale: 1, y: 0 }}
+                                    className="absolute right-0 mt-2 w-40 bg-white border border-slate-100 shadow-2xl rounded-2xl overflow-hidden z-50 p-1"
+                                >
+                                    {(['en', 'mr', 'hi'] as const).map((lang) => (
+                                        <button
+                                            key={lang}
+                                            onClick={() => {
+                                                setLanguage(lang);
+                                                setLangMenuOpen(false);
+                                            }}
+                                            className={`w-full text-left px-4 py-3 text-sm font-bold rounded-xl transition-all ${language === lang ? 'text-forest-700 bg-forest-50' : 'text-slate-600 hover:bg-slate-50'}`}
+                                        >
+                                            {lang === 'en' ? 'English' : lang === 'mr' ? 'मराठी' : 'हिंदी'}
+                                        </button>
+                                    ))}
+                                </motion.div>
+                            )}
+                        </div>
+
+                        <Link to="/login" className="text-slate-600 hover:text-slate-900 font-bold transition-colors">{t('nav.login')}</Link>
+                        <Link to="/register" className="bg-gradient-to-r from-forest-500 to-forest-700 hover:from-forest-600 hover:to-forest-800 text-white px-7 py-3 rounded-2xl font-black transition-all shadow-lg shadow-forest-500/25 active:scale-95">
+                            {t('nav.get_started')}
                         </Link>
                     </div>
 
@@ -424,15 +475,32 @@ const LandingPage = () => {
                 {mobileMenuOpen && (
                     <div className="lg:hidden bg-white border-t border-slate-100 px-4 py-4">
                         <div className="flex flex-col gap-4">
-                            <a href="#features" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>Features</a>
-                            <a href="#how-it-works" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>How It Works</a>
-                            <a href="#schemes" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>Schemes</a>
-                            <a href="#dos-donts" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>Do's & Don'ts</a>
-                            <a href="#testimonials" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>Testimonials</a>
-                            <a href="#faq" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>FAQ</a>
-                            <Link to="/login" className="text-slate-600 font-medium">Login</Link>
+                            <a href="#features" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.features')}</a>
+                            <a href="#how-it-works" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.how_it_works')}</a>
+                            <a href="#schemes" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.schemes')}</a>
+                            <a href="#dos-donts" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.dos_donts')}</a>
+                            <a href="#testimonials" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.testimonials')}</a>
+                            <a href="#faq" className="text-slate-600 font-medium" onClick={() => setMobileMenuOpen(false)}>{t('nav.faq')}</a>
+                            <div className="flex flex-col gap-2 mt-2 py-4 border-t border-slate-100">
+                                <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest pl-1">{t('nav.select_language')}</p>
+                                <div className="flex gap-2">
+                                    {(['en', 'mr', 'hi'] as const).map((lang) => (
+                                        <button
+                                            key={lang}
+                                            onClick={() => {
+                                                setLanguage(lang);
+                                                setMobileMenuOpen(false);
+                                            }}
+                                            className={`flex-1 py-3 rounded-xl text-sm font-black border transition-all ${language === lang ? 'bg-forest-600 text-white border-forest-600 shadow-lg shadow-forest-500/20' : 'bg-slate-50 text-slate-600 border-slate-200'}`}
+                                        >
+                                            {lang === 'en' ? 'English' : lang === 'mr' ? 'मराठी' : 'हिंदी'}
+                                        </button>
+                                    ))}
+                                </div>
+                            </div>
+                            <Link to="/login" className="text-slate-600 font-medium">{t('nav.login')}</Link>
                             <Link to="/register" className="bg-emerald-600 text-white px-4 py-2 rounded-xl font-medium text-sm text-center">
-                                Get Started
+                                {t('nav.get_started')}
                             </Link>
                         </div>
                     </div>
@@ -444,15 +512,16 @@ const LandingPage = () => {
                 <section className="relative min-h-[90vh] flex items-center overflow-hidden">
                     <div className="absolute inset-0 z-0">
                         <img
-                            src="https://images.unsplash.com/photo-1625246333195-78d9c38ad449?w=1920&q=80"
+                            src="/images/hero/agriculture-main.png"
                             alt="Farm Background"
                             className="w-full h-full object-cover"
                         />
-                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/95 via-slate-900/80 to-slate-900/40" />
+                        <div className="absolute inset-0 bg-gradient-to-r from-slate-900/80 via-slate-900/40 to-transparent" />
                     </div>
 
-                    <div className="absolute top-20 right-20 w-72 h-72 bg-emerald-500/20 rounded-full blur-3xl" />
-                    <div className="absolute bottom-20 left-10 w-96 h-96 bg-emerald-400/10 rounded-full blur-3xl" />
+                    <div className="absolute top-20 right-20 w-72 h-72 bg-forest-500/20 rounded-full blur-3xl animate-float" />
+                    <div className="absolute bottom-20 left-10 w-96 h-96 bg-soil-500/10 rounded-full blur-3xl" style={{ animation: 'float 8s ease-in-out infinite' }} />
+                    <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full h-full bg-[radial-gradient(circle_at_center,transparent_0%,rgba(0,0,0,0.4)_100%)] pointer-events-none" />
 
                     <div className="relative z-10 max-w-7xl mx-auto px-4 md:px-6 py-24">
                         <motion.div
@@ -461,25 +530,27 @@ const LandingPage = () => {
                             transition={{ duration: 0.8 }}
                             className="max-w-3xl"
                         >
-                            <div className="inline-flex items-center gap-2 px-4 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-sm font-medium mb-8">
-                                <Cloud className="w-4 h-4 text-emerald-400" /> Trusted by 10,000+ Farmers
+                            <div className="inline-flex items-center gap-2 px-5 py-2 bg-white/10 backdrop-blur-md border border-white/20 rounded-full text-white text-xs font-black uppercase tracking-widest mb-8 shadow-xl">
+                                <motion.div animate={{ rotate: 360 }} transition={{ duration: 4, repeat: Infinity, ease: "linear" }}>
+                                    <Sun className="w-4 h-4 text-wheat-500" />
+                                </motion.div>
+                                {t('landing.trusted_by')}
                             </div>
 
-                            <h1 className="text-5xl md:text-7xl font-bold text-white mb-6 leading-tight">
-                                Smart Farming <br />
-                                <span className="bg-gradient-to-r from-emerald-400 to-teal-400 bg-clip-text text-transparent">Intelligence</span> Platform
+                            <h1 className="text-6xl md:text-8xl font-black text-white mb-8 leading-[1.1] tracking-tighter">
+                                {t('landing.hero_title')}
                             </h1>
 
-                            <p className="text-xl text-slate-300 mb-10 max-w-2xl leading-relaxed">
-                                Empower your farm with precision weather forecasts, AI-powered crop advisories, and early climate alerts. Make data-driven decisions for better yields.
+                            <p className="text-xl md:text-2xl text-slate-200 mb-12 max-w-2xl leading-relaxed font-medium">
+                                {t('landing.hero_subtitle')}
                             </p>
 
-                            <div className="flex flex-wrap gap-4">
-                                <Link to="/register" className="bg-gradient-to-r from-emerald-500 to-emerald-600 hover:from-emerald-600 hover:to-emerald-700 text-white px-8 py-4 rounded-2xl font-semibold flex items-center gap-2 transition-all shadow-lg shadow-emerald-500/30">
-                                    Start Free Trial <ArrowRight className="w-5 h-5" />
+                            <div className="flex flex-wrap gap-5">
+                                <Link to="/register" className="bg-gradient-to-r from-forest-500 to-forest-700 hover:from-forest-600 hover:to-forest-800 text-white px-10 py-5 rounded-[2rem] font-black flex items-center gap-3 transition-all shadow-2xl shadow-forest-900/40 hover:-translate-y-1 active:scale-95 group">
+                                    {t('landing.start_trial')} <ArrowRight className="w-6 h-6 group-hover:translate-x-2 transition-transform" />
                                 </Link>
-                                <a href="#features" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-white/20 transition-all">
-                                    See Features
+                                <a href="#features" className="bg-white/10 backdrop-blur-md border border-white/20 text-white px-10 py-5 rounded-[2rem] font-black hover:bg-white/20 transition-all hover:-translate-y-1 shadow-xl">
+                                    {t('landing.see_features')}
                                 </a>
                             </div>
 
@@ -520,19 +591,21 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── Interactive Weather Map ────────────────────────────────── */}
-                <section className="py-20 bg-slate-50">
-                    <div className="max-w-7xl mx-auto px-4 md:px-6">
+                <section className="py-24 bg-forest-50/20 backdrop-blur-sm relative overflow-hidden">
+                    <div className="absolute top-0 right-0 w-64 h-64 bg-soil-200/20 rounded-full blur-3xl -translate-y-1/2 translate-x-1/2" />
+                    <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
                         <SectionHeader
-                            subtitle="Live Demo"
-                            title="See Weather in Your Area"
-                            description="Explore hyper-local weather data for villages across India."
+                            subtitle={t('landing.demo_subtitle')}
+                            title={t('landing.demo_title')}
+                            description={t('landing.demo_desc')}
                             center
                         />
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
-                            className="rounded-3xl overflow-hidden shadow-2xl"
+                            transition={{ duration: 1, ease: "easeOut" }}
+                            className="rounded-[3rem] overflow-hidden shadow-2xl border-4 border-white shadow-forest-900/5"
                         >
                             <InteractiveWeatherMap />
                         </motion.div>
@@ -543,9 +616,9 @@ const LandingPage = () => {
                 <section id="features" className="py-24 bg-white">
                     <div className="max-w-7xl mx-auto px-4 md:px-6">
                         <SectionHeader
-                            subtitle="Platform Features"
-                            title="Everything Your Farm Needs"
-                            description="From village-level weather to AI-powered crop advisories, AgroCast has you covered."
+                            subtitle={t('features.subtitle')}
+                            title={t('features.title')}
+                            description={t('features.description')}
                             center
                         />
 
@@ -569,20 +642,30 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── How It Works ───────────────────────────────────────────── */}
-                <section id="how-it-works" className="py-24 bg-slate-50">
-                    <div className="max-w-7xl mx-auto px-4 md:px-6">
+                <section id="how-it-works" className="py-28 bg-white relative overflow-hidden">
+                    <div className="absolute top-1/2 left-0 w-full h-[30%] bg-forest-50/30 -skew-y-3 -translate-y-1/2" />
+                    <div className="max-w-7xl mx-auto px-4 md:px-6 relative z-10">
                         <SectionHeader
-                            subtitle="Simple Process"
-                            title="How AgroCast Works"
-                            description="Get started in minutes - no technical knowledge required."
+                            subtitle={t('how_it_works.subtitle')}
+                            title={t('how_it_works.title')}
+                            description={t('how_it_works.description')}
                             center
                         />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 relative">
-                            <div className="hidden lg:block absolute top-8 left-[12%] right-[12%] h-0.5 bg-gradient-to-r from-emerald-200 via-emerald-400 to-emerald-200" />
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-10 relative">
+                            {/* Animated Connector Line */}
+                            <div className="hidden lg:block absolute top-10 left-[10%] right-[10%] h-1 bg-slate-100 rounded-full overflow-hidden">
+                                <motion.div
+                                    initial={{ x: "-100%" }}
+                                    whileInView={{ x: "0%" }}
+                                    viewport={{ once: true }}
+                                    transition={{ duration: 2, ease: "easeInOut" }}
+                                    className="w-full h-full bg-gradient-to-r from-forest-500 via-wheat-500 to-forest-500"
+                                />
+                            </div>
 
                             {steps.map((step, index) => (
-                                <div key={index} className="relative">
+                                <div key={index} className="relative group">
                                     <StepItem {...step} />
                                 </div>
                             ))}
@@ -591,16 +674,16 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── Government Schemes Section ────────────────────────────────── */}
-                <section id="schemes" className="py-24 bg-white">
+                <section id="schemes" className="py-28 bg-forest-50/10">
                     <div className="max-w-7xl mx-auto px-4 md:px-6">
                         <SectionHeader
-                            subtitle="Government Support"
-                            title="Government Schemes for Farmers"
-                            description="Explore Maharashtra and Central Government schemes that support farmers with subsidies, insurance, irrigation assistance, and financial benefits."
+                            subtitle={t('schemes.subtitle')}
+                            title={t('schemes.title')}
+                            description={t('schemes.description')}
                             center
                         />
 
-                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
                             {schemesList.map((scheme, index) => (
                                 <SchemeCard key={index} scheme={scheme} delay={index * 0.1} />
                             ))}
@@ -610,15 +693,15 @@ const LandingPage = () => {
                             initial={{ opacity: 0, y: 20 }}
                             whileInView={{ opacity: 1, y: 0 }}
                             viewport={{ once: true }}
-                            className="mt-16 text-center"
+                            className="mt-20 text-center"
                         >
-                            <a 
-                                href="https://krishi.maharashtra.gov.in" 
-                                target="_blank" 
+                            <a
+                                href="https://krishi.maharashtra.gov.in"
+                                target="_blank"
                                 rel="noopener noreferrer"
-                                className="inline-flex items-center gap-2 bg-emerald-600 text-white px-8 py-4 rounded-2xl font-semibold hover:bg-emerald-700 transition-all shadow-lg shadow-emerald-500/25"
+                                className="inline-flex items-center gap-3 bg-gradient-to-r from-forest-600 to-forest-700 text-white px-10 py-5 rounded-2xl font-black hover:from-forest-700 hover:to-forest-800 transition-all shadow-2xl shadow-forest-500/30 hover:-translate-y-1 active:scale-95 group"
                             >
-                                View All Schemes <ArrowRight className="w-5 h-5" />
+                                View All Schemes <ArrowRight className="w-5 h-5 group-hover:translate-x-2 transition-transform" />
                             </a>
                         </motion.div>
                     </div>
@@ -628,9 +711,9 @@ const LandingPage = () => {
                 <section id="dos-donts" className="py-24 bg-slate-50 overflow-hidden">
                     <div className="max-w-7xl mx-auto px-4 md:px-6">
                         <SectionHeader
-                            subtitle="Disease Prevention"
-                            title="Do's & Don'ts for Common Diseases"
-                            description="Follow these guidelines to prevent and manage common crop diseases."
+                            subtitle={t('dos_donts.subtitle')}
+                            title={t('dos_donts.title')}
+                            description={t('dos_donts.description')}
                             center
                         />
                     </div>
@@ -638,15 +721,12 @@ const LandingPage = () => {
                     {/* Horizontal Scrollable Carousel */}
                     <div className="relative">
                         {/* Gradient overlays for swipe hint */}
-                        <div className="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-slate-50 to-transparent z-10" />
-                        <div className="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-slate-50 to-transparent z-10" />
+                        <div className="absolute left-0 top-0 bottom-0 w-16 bg-gradient-to-r from-slate-50 to-transparent z-10" />
+                        <div className="absolute right-0 top-0 bottom-0 w-16 bg-gradient-to-l from-slate-50 to-transparent z-10" />
 
                         <div
-                            className="flex gap-6 overflow-x-auto pb-6 px-8 snap-x snap-mandatory scrollbar-hide"
-                            style={{
-                                scrollbarWidth: 'none',
-                                msOverflowStyle: 'none',
-                            }}
+                            ref={scrollContainerRef}
+                            className="flex gap-6 overflow-x-auto pb-8 px-8 snap-x snap-mandatory no-scrollbar scroll-smooth"
                         >
                             {[...diseases, ...diseases].map((disease, index) => (
                                 <motion.div
@@ -673,7 +753,7 @@ const LandingPage = () => {
                                         <div className="p-5">
                                             <div className="mb-4">
                                                 <h4 className="text-sm font-semibold text-emerald-600 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                    <Check className="w-4 h-4" /> Do's
+                                                    <Check className="w-4 h-4" /> {t('dos_donts.dos')}
                                                 </h4>
                                                 <ul className="space-y-2">
                                                     {disease.dos.slice(0, 3).map((item, i) => (
@@ -686,7 +766,7 @@ const LandingPage = () => {
                                             </div>
                                             <div>
                                                 <h4 className="text-sm font-semibold text-red-600 uppercase tracking-wide mb-3 flex items-center gap-2">
-                                                    <XCircle className="w-4 h-4" /> Don'ts
+                                                    <XCircle className="w-4 h-4" /> {t('dos_donts.donts')}
                                                 </h4>
                                                 <ul className="space-y-2">
                                                     {disease.donts.slice(0, 3).map((item, i) => (
@@ -703,87 +783,70 @@ const LandingPage = () => {
                             ))}
                         </div>
 
-                        {/* Swipe indicator */}
-                        <div className="flex justify-center mt-4 gap-2">
-                            <span className="text-slate-400 text-sm flex items-center gap-2">
-                                <ChevronRight className="w-4 h-4 rotate-180" /> Swipe to view more <ChevronRight className="w-4 h-4" />
+                        {/* Navigation Arrows */}
+                        <button
+                            onClick={() => scroll('left')}
+                            className="absolute left-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full border border-slate-200 shadow-xl flex items-center justify-center text-slate-600 hover:bg-forest-600 hover:text-white transition-all z-20 group"
+                        >
+                            <ArrowRight className="w-6 h-6 rotate-180 group-hover:-translate-x-1 transition-transform" />
+                        </button>
+                        <button
+                            onClick={() => scroll('right')}
+                            className="absolute right-4 top-1/2 -translate-y-1/2 w-12 h-12 bg-white/90 backdrop-blur-md rounded-full border border-slate-200 shadow-xl flex items-center justify-center text-slate-600 hover:bg-forest-600 hover:text-white transition-all z-20 group"
+                        >
+                            <ArrowRight className="w-6 h-6 group-hover:translate-x-1 transition-transform" />
+                        </button>
+
+                        <div className="flex justify-center mt-6 gap-3">
+                            <span className="text-forest-600/60 text-xs font-black uppercase tracking-widest flex items-center gap-3">
+                                <div className="w-8 h-px bg-forest-200" />
+                                Use arrows or swipe to browse
+                                <div className="w-8 h-px bg-forest-200" />
                             </span>
                         </div>
                     </div>
                 </section>
 
                 {/* ── Video Carousel Section ───────────────────────────────────────────── */}
-                <section className="py-16 bg-slate-900 overflow-hidden">
-                    <div className="mb-8">
-                        <SectionHeader
-                            subtitle="Watch More"
-                            title="Farming & Weather Videos"
-                            description="Learn about agriculture and weather patterns"
-                            center
-                        />
-                    </div>
-                    <div className="relative">
-                        <div className="flex animate-scroll gap-6">
-                            {[...videos, ...videos, ...videos].map((video, index) => (
-                                <a
-                                    key={index}
-                                    href={video.youtubeUrl}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex-shrink-0 w-80 md:w-96 group"
-                                >
-                                    <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
-                                        <img
-                                            src={video.thumbnail}
-                                            alt={video.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
-                                        />
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Play className="w-16 h-16 text-white" />
-                                        </div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                                            <p className="text-white font-medium text-sm">{video.title}</p>
-                                        </div>
-                                    </div>
-                                </a>
-                            ))}
+                <section className="py-24 bg-slate-900 overflow-hidden relative">
+                    <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-forest-500 to-transparent opacity-30" />
+                    <div className="mb-12 relative z-10">
+                        <div className="text-center max-w-3xl mx-auto">
+                            <motion.span
+                                initial={{ opacity: 0, scale: 0.9 }}
+                                whileInView={{ opacity: 1, scale: 1 }}
+                                className="inline-flex items-center gap-2 px-5 py-2 rounded-full bg-forest-500/10 text-forest-400 text-xs font-black uppercase tracking-widest mb-4 border border-forest-500/20 shadow-sm"
+                            >
+                                Watch More
+                            </motion.span>
+                            <h2 className="text-4xl md:text-5xl font-black text-white mb-6">Farming & Weather Videos</h2>
+                            <p className="text-lg text-slate-400">Learn about agriculture and weather patterns from experts</p>
                         </div>
                     </div>
-                </section>
-
-                {/* ── Video Carousel Section ───────────────────────────────────────────── */}
-                <section className="py-16 bg-slate-900 overflow-hidden">
-                    <div className="mb-8">
-                        <SectionHeader
-                            subtitle="Watch More"
-                            title="Farming & Weather Videos"
-                            description="Learn about agriculture and weather patterns"
-                            center
-                        />
-                    </div>
                     <div className="relative">
-                        <div className="flex animate-scroll gap-6">
+                        <div className="flex animate-scroll gap-8">
                             {[...videos, ...videos, ...videos].map((video, index) => (
                                 <a
                                     key={index}
                                     href={video.youtubeUrl}
                                     target="_blank"
                                     rel="noopener noreferrer"
-                                    className="flex-shrink-0 w-80 md:w-96 group"
+                                    className="flex-shrink-0 w-80 md:w-[450px] group transition-all duration-500"
                                 >
-                                    <div className="relative rounded-2xl overflow-hidden shadow-lg aspect-video">
+                                    <div className="relative rounded-[2.5rem] overflow-hidden shadow-2xl aspect-video border-4 border-white/5">
                                         <img
                                             src={video.thumbnail}
                                             alt={video.title}
-                                            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700"
                                         />
-                                        <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
-                                            <Play className="w-16 h-16 text-white" />
+                                        <div className="absolute inset-0 bg-forest-900/40 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+                                            <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center shadow-2xl">
+                                                <Play className="w-8 h-8 text-forest-600 fill-forest-600" />
+                                            </div>
                                         </div>
-                                        <div className="absolute inset-0 bg-gradient-to-t from-black/70 to-transparent" />
-                                        <div className="absolute bottom-0 left-0 right-0 p-4">
-                                            <p className="text-white font-medium text-sm">{video.title}</p>
+                                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent pointer-events-none" />
+                                        <div className="absolute bottom-0 left-0 right-0 p-8">
+                                            <p className="text-white font-black text-lg tracking-tight">{video.title}</p>
                                         </div>
                                     </div>
                                 </a>
@@ -797,7 +860,7 @@ const LandingPage = () => {
                         <SectionHeader
                             subtitle="Success Stories"
                             title="Trusted by Farmers Across India"
-                            description="Hear from our community of successful farmers who have transformed their yields with AgroCast."
+                            description="Hear from our community of successful farmers who have transformed their yields with KrushiSarthi."
                             center
                         />
 
@@ -815,7 +878,7 @@ const LandingPage = () => {
                         <SectionHeader
                             subtitle="Common Questions"
                             title="Frequently Asked Questions"
-                            description="Everything you need to know about AgroCast platform and features."
+                            description="Everything you need to know about KrushiSarthi platform and features."
                             center
                         />
 
@@ -828,30 +891,35 @@ const LandingPage = () => {
                 </section>
 
                 {/* ── CTA Section ────────────────────────────────────────────── */}
-                <section className="py-24 bg-gradient-to-r from-emerald-600 to-teal-600 relative overflow-hidden">
-                    <div className="absolute inset-0 opacity-10">
+                <section className="py-32 bg-gradient-to-br from-forest-700 via-forest-800 to-soil-900 relative overflow-hidden">
+                    <div className="absolute inset-0 opacity-20">
                         <div className="absolute inset-0" style={{
                             backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
                         }} />
                     </div>
 
-                    <div className="relative z-10 max-w-3xl mx-auto text-center px-4">
+                    {/* Decorative blobs */}
+                    <div className="absolute top-0 left-0 w-96 h-96 bg-wheat-500/10 rounded-full blur-[120px] -translate-x-1/2 -translate-y-1/2" />
+                    <div className="absolute bottom-0 right-0 w-[500px] h-[500px] bg-forest-500/20 rounded-full blur-[120px] translate-x-1/3 translate-y-1/3" />
+
+                    <div className="relative z-10 max-w-4xl mx-auto text-center px-4">
                         <motion.div
-                            initial={{ opacity: 0, y: 20 }}
-                            whileInView={{ opacity: 1, y: 0 }}
+                            initial={{ opacity: 0, scale: 0.95 }}
+                            whileInView={{ opacity: 1, scale: 1 }}
                             viewport={{ once: true }}
+                            transition={{ duration: 0.8 }}
                         >
-                            <h2 className="text-4xl md:text-5xl font-bold text-white mb-6">
+                            <h2 className="text-5xl md:text-7xl font-black text-white mb-8 tracking-tighter">
                                 Ready to Transform Your Farm?
                             </h2>
-                            <p className="text-xl text-emerald-100 mb-10">
-                                Join over 10,000 farmers who are already using AgroCast to increase their yields and reduce risks.
+                            <p className="text-xl md:text-2xl text-forest-100 mb-12 max-w-2xl mx-auto font-medium leading-relaxed">
+                                Join over 10,000 farmers who are already using KrushiSarthi to increase their yields and reduce risks.
                             </p>
-                            <div className="flex flex-wrap justify-center gap-4">
-                                <Link to="/register" className="bg-white text-emerald-600 px-10 py-4 rounded-2xl font-semibold text-lg hover:bg-emerald-50 transition-all shadow-lg">
+                            <div className="flex flex-wrap justify-center gap-6">
+                                <Link to="/register" className="bg-white text-forest-700 px-12 py-5 rounded-[2.5rem] font-black text-xl hover:bg-forest-50 transition-all shadow-2xl hover:-translate-y-1 active:scale-95">
                                     Get Started Free
                                 </Link>
-                                <a href="#features" className="bg-transparent border-2 border-white/30 text-white px-10 py-4 rounded-2xl font-semibold text-lg hover:bg-white/10 transition-all">
+                                <a href="#features" className="bg-transparent border-2 border-white/30 text-white px-12 py-5 rounded-[2.5rem] font-black text-xl hover:bg-white/10 transition-all hover:-translate-y-1">
                                     Learn More
                                 </a>
                             </div>
@@ -865,23 +933,23 @@ const LandingPage = () => {
                 <div className="max-w-7xl mx-auto px-4 md:px-6">
                     <div className="grid grid-cols-1 md:grid-cols-5 gap-12 mb-12">
                         <div className="md:col-span-2">
-                            <div className="flex items-center gap-3 mb-6">
-                                <div className="w-10 h-10 bg-gradient-to-br from-emerald-500 to-emerald-600 rounded-xl flex items-center justify-center">
-                                    <Sprout className="text-white w-6 h-6" />
+                            <div className="flex items-center gap-3 mb-6 group">
+                                <div className="w-10 h-10 bg-gradient-to-br from-forest-500 to-forest-700 rounded-xl flex items-center justify-center group-hover:rotate-12 transition-transform duration-500">
+                                    <Logo size={24} />
                                 </div>
-                                <span className="text-xl font-bold">AgroCast</span>
+                                <span className="text-xl font-black tracking-tight">KrushiSarthi</span>
                             </div>
-                            <p className="text-slate-400 leading-relaxed mb-6">
+                            <p className="text-slate-400 font-medium leading-relaxed mb-8">
                                 Empowering Indian farmers with AI-powered weather forecasts and crop intelligence for better yields and reduced risks.
                             </p>
-                            <div className="flex gap-4">
-                                <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-emerald-600 transition-colors">
+                            <div className="flex gap-5">
+                                <a href="#" className="w-12 h-12 bg-slate-800/50 rounded-2xl flex items-center justify-center hover:bg-forest-600 hover:text-white transition-all duration-300 hover:-translate-y-1">
                                     <Twitter className="w-5 h-5" />
                                 </a>
-                                <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-emerald-600 transition-colors">
+                                <a href="#" className="w-12 h-12 bg-slate-800/50 rounded-2xl flex items-center justify-center hover:bg-forest-600 hover:text-white transition-all duration-300 hover:-translate-y-1">
                                     <Instagram className="w-5 h-5" />
                                 </a>
-                                <a href="#" className="w-10 h-10 bg-slate-800 rounded-full flex items-center justify-center hover:bg-emerald-600 transition-colors">
+                                <a href="#" className="w-12 h-12 bg-slate-800/50 rounded-2xl flex items-center justify-center hover:bg-forest-600 hover:text-white transition-all duration-300 hover:-translate-y-1">
                                     <Linkedin className="w-5 h-5" />
                                 </a>
                             </div>
@@ -919,7 +987,7 @@ const LandingPage = () => {
                     </div>
 
                     <div className="border-t border-slate-800 pt-8 text-center text-sm text-slate-400">
-                        © 2024 AgroCast. All rights reserved.
+                        © 2026 KrushiSarthi. All rights reserved.
                     </div>
                 </div>
             </footer>

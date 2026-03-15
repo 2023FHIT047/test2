@@ -113,7 +113,7 @@ const LaborDashboard = () => {
                             </div>
                             <div>
                                 <h1 className="font-bold text-lg">Labor Dashboard</h1>
-                                <p className="text-emerald-100 text-xs">AgroCast Worker Portal</p>
+                                <p className="text-emerald-100 text-xs">KrushiSarthi Worker Portal</p>
                             </div>
                         </div>
                         <button onClick={handleLogout} className="flex items-center gap-2 px-4 py-2 bg-white/10 hover:bg-white/20 rounded-xl text-sm">

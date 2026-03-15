@@ -222,7 +222,7 @@ const AdminDashboard = () => {
                     </div>
                     <div>
                         <h1 className="font-black text-white leading-none">ADMIN PANEL</h1>
-                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mt-1 italic">AgroCast Command Center</p>
+                        <p className="text-[10px] font-black text-blue-400 uppercase tracking-widest mt-1 italic">KrushiSarthi Command Center</p>
                     </div>
                 </div>
                 <div className="flex items-center gap-4">
