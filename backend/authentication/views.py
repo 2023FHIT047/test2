@@ -27,12 +27,17 @@ class CustomTokenObtainPairView(TokenObtainPairView):
             try:
                 user = Farmer.objects.get(phone=identifier)
                 request.data['email'] = user.email
+                request.data['username'] = user.username
             except Farmer.DoesNotExist:
                 pass
+        else:
+            # Also set username to email if it's an email
+            if identifier:
+                request.data['username'] = identifier
                 
         response = super().post(request, *args, **kwargs)
         if response.status_code == 200:
-            user = Farmer.objects.get(email=request.data['email'])
+            user = Farmer.objects.get(email=request.data.get('email') or request.data.get('username'))
             response.data['user'] = FarmerSerializer(user).data
         return response
 
