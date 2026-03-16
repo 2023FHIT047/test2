@@ -47,7 +47,7 @@ const LaborRegisterPage = () => {
         setIsLoading(true);
         try {
             // Updated endpoint for labor registration
-            const response = await axios.post("http://localhost:8000/api/labor/register", {
+            const response = await axios.post("/labor/register", {
                 name: formData.name,
                 phone: formData.phone,
                 village: formData.village,

@@ -29,7 +29,7 @@ const LoginPage = () => {
         setIsLoading(true);
 
         try {
-            const response = await axios.post("http://localhost:8000/api/login", {
+            const response = await axios.post("/login", {
                 email: formData.email,
                 password: formData.password
             });

@@ -36,7 +36,7 @@ const Dashboard = () => {
                 }
 
                 // Fetch Profile
-                const profileResponse = await axios.get("http://localhost:8000/api/profile", {
+                const profileResponse = await axios.get("/profile", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -55,7 +55,7 @@ const Dashboard = () => {
 
                 // Fetch Weather
                 try {
-                    const weatherResponse = await axios.get('http://localhost:8000/api/weather/farm-forecast/', {
+                    const weatherResponse = await axios.get('/weather/farm-forecast/', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setWeatherData(weatherResponse.data);
@@ -75,7 +75,7 @@ const Dashboard = () => {
 
                 // Fetch Disaster Alerts
                 try {
-                    const disasterRes = await axios.get('http://localhost:8000/api/weather/disaster-alerts/', {
+                    const disasterRes = await axios.get('/weather/disaster-alerts/', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setDisasterAlerts(disasterRes.data);
@@ -140,7 +140,7 @@ const Dashboard = () => {
                                     // Refresh notifications when opening
                                     try {
                                         const token = localStorage.getItem("token");
-                                        const notifyRes = await axios.get('http://localhost:8000/api/alerts-manager/my-notifications', {
+                                        const notifyRes = await axios.get('/alerts-manager/my-notifications', {
                                             headers: { Authorization: `Bearer ${token}` }
                                         });
                                         console.log("Notifications:", notifyRes.data);
@@ -170,7 +170,7 @@ const Dashboard = () => {
                                         const newCrop = e.target.value;
                                         try {
                                             const token = localStorage.getItem("token");
-                                            await axios.patch("http://localhost:8000/api/profile", { crop_type: newCrop }, {
+                                            await axios.patch("/profile", { crop_type: newCrop }, {
                                                 headers: { Authorization: `Bearer ${token}` }
                                             });
                                             setUser({ ...user, crop_type: newCrop });
