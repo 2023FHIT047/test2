@@ -31,13 +31,13 @@ const FarmingCalendar = () => {
                 }
 
                 const [profileRes, calendarRes, weatherRes] = await Promise.all([
-                    axios.get("http://localhost:8000/api/profile", {
+                    axios.get("/profile", {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get("http://localhost:8000/api/farming-calendar", {
+                    axios.get("/farming-calendar", {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:8000/api/weather/farm-forecast/', {
+                    axios.get('/weather/farm-forecast/', {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -455,3 +455,4 @@ const SidebarItem = ({ icon, label, active = false, onClick }: any) => (
 );
 
 export default FarmingCalendar;
+

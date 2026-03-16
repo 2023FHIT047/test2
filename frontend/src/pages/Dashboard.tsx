@@ -65,7 +65,7 @@ const Dashboard = () => {
 
                 // Fetch Notifications
                 try {
-                    const notifyRes = await axios.get('http://localhost:8000/api/alerts-manager/my-notifications', {
+                    const notifyRes = await axios.get('/alerts-manager/my-notifications', {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setNotifications(notifyRes.data);
@@ -773,3 +773,4 @@ const AlertCard = ({ icon, title, details, severity }: any) => (
 );
 
 export default Dashboard;
+

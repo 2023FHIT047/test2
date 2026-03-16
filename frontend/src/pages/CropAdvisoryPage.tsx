@@ -213,14 +213,14 @@ const CropAdvisoryPage = () => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const profileRes = await axios.get("http://localhost:8000/api/profile", {
+                const profileRes = await axios.get("/profile", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setUser(profileRes.data);
                 setSelectedSoil(profileRes.data.soil_type || "Black Cotton");
 
                 try {
-                    const weatherRes = await axios.get("http://localhost:8000/api/weather/farm-forecast/", {
+                    const weatherRes = await axios.get("/weather/farm-forecast/", {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setWeatherData(weatherRes.data);
@@ -533,3 +533,4 @@ const SidebarItem = ({ icon, label, active = false }: any) => (
 );
 
 export default CropAdvisoryPage;
+

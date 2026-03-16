@@ -35,7 +35,7 @@ const CropDiseaseDetection: React.FC = () => {
 
         try {
             const token = localStorage.getItem('token');
-            const response = await axios.post('http://localhost:8000/api/disease/detect', formData, {
+            const response = await axios.post('/disease/detect', formData, {
                 headers: {
                     'Content-Type': 'multipart/form-data',
                     'Authorization': `Bearer ${token}`
@@ -249,3 +249,4 @@ const SidebarItem = ({ icon, label, active = false }: any) => (
 );
 
 export default CropDiseaseDetection;
+

@@ -54,22 +54,22 @@ const AdminDashboard = () => {
         try {
             const token = localStorage.getItem("token");
             const [statsRes, laborRes, farmerRes, alertRes, auditRes, coordRes] = await Promise.all([
-                axios.get("http://localhost:8000/api/alerts-manager/admin/stats", {
+                axios.get("/alerts-manager/admin/stats", {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get("http://localhost:8000/api/labor/admin/all", {
+                axios.get("/labor/admin/all", {
                     headers: { Authorization: `Bearer ${token}` }
                 }),
-                axios.get("http://localhost:8000/api/authentication/admin/farmers", {
+                axios.get("/authentication/admin/farmers", {
                     headers: { Authorization: `Bearer ${token}` }
                 }).catch(() => ({ data: [] })),
-                axios.get("http://localhost:8000/api/alerts/admin/all", {
+                axios.get("/alerts/admin/all", {
                     headers: { Authorization: `Bearer ${token}` }
                 }).catch(() => ({ data: [] })),
-                axios.get("http://localhost:8000/api/admin/audit-logs", {
+                axios.get("/admin/audit-logs", {
                     headers: { Authorization: `Bearer ${token}` }
                 }).catch(() => ({ data: [] })),
-                axios.get("http://localhost:8000/api/authentication/coordinators/", {
+                axios.get("/authentication/coordinators/", {
                     headers: { Authorization: `Bearer ${token}` }
                 }).catch(() => ({ data: [] }))
             ]);
@@ -98,7 +98,7 @@ const AdminDashboard = () => {
     const handleLaborAction = async (id: number, action: string) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.post(`http://localhost:8000/api/labor/admin/action/${id}`,
+            await axios.post(`/labor/admin/action/${id}`,
                 { action },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -111,7 +111,7 @@ const AdminDashboard = () => {
     const handleFarmerAction = async (id: number, action: string) => {
         try {
             const token = localStorage.getItem("token");
-            await axios.post(`http://localhost:8000/api/authentication/admin/farmer/action/${id}`,
+            await axios.post(`/authentication/admin/farmer/action/${id}`,
                 { action },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -127,7 +127,7 @@ const AdminDashboard = () => {
         setIsSending(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8000/api/alerts-manager/admin/send",
+            await axios.post("/alerts-manager/admin/send",
                 notificationForm,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -145,7 +145,7 @@ const AdminDashboard = () => {
         setIsSending(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8000/api/alerts/admin/create",
+            await axios.post("/alerts/admin/create",
                 alertForm,
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -164,7 +164,7 @@ const AdminDashboard = () => {
         setIsCreatingCoordinator(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8000/api/authentication/coordinators/create",
+            await axios.post("/authentication/coordinators/create",
                 { ...coordinatorForm, role: "coordinator" },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -940,3 +940,4 @@ const AdminDashboard = () => {
 };
 
 export default AdminDashboard;
+

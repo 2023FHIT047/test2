@@ -295,3 +295,4 @@ const LaborRegisterPage = () => {
 };
 
 export default LaborRegisterPage;
+

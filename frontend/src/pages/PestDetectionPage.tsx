@@ -263,3 +263,4 @@ const SidebarItem = ({ icon, label, active = false }: any) => (
 );
 
 export default PestDetectionPage;
+

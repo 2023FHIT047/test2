@@ -241,3 +241,4 @@ const FarmDigitalTwinPage = () => {
 };
 
 export default FarmDigitalTwinPage;
+

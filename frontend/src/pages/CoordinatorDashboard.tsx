@@ -35,7 +35,7 @@ const CoordinatorDashboard = () => {
                 // Fetch weather for coordinator's district
                 if (user.assigned_district) {
                     try {
-                        const weatherRes = await axios.get(`http://localhost:8000/api/weather/village-weather/`, {
+                        const weatherRes = await axios.get(`/weather/village-weather/`, {
                             headers: { Authorization: `Bearer ${token}` }
                         });
                         setWeatherData(weatherRes.data);
@@ -47,7 +47,7 @@ const CoordinatorDashboard = () => {
 
             // Fetch farmers - for coordinators, use district filter
             try {
-                const farmersRes = await axios.get("http://localhost:8000/api/authentication/coordinators/farmers", {
+                const farmersRes = await axios.get("/authentication/coordinators/farmers", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 const allFarmers = farmersRes.data || [];
@@ -65,7 +65,7 @@ const CoordinatorDashboard = () => {
 
             // Fetch labor in coordinator's district
             try {
-                const laborRes = await axios.get("http://localhost:8000/api/labor/", {
+                const laborRes = await axios.get("/labor/", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setLaborList(laborRes.data.results || laborRes.data || []);
@@ -84,7 +84,7 @@ const CoordinatorDashboard = () => {
         setIsSending(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.post("http://localhost:8000/api/authentication/coordinators/send-alert",
+            await axios.post("/authentication/coordinators/send-alert",
                 { title: notificationForm.title, message: notificationForm.message, type: notificationForm.type },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -487,3 +487,4 @@ const CoordinatorDashboard = () => {
 };
 
 export default CoordinatorDashboard;
+

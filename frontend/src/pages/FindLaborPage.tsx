@@ -16,7 +16,7 @@ const FindLaborPage = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("http://localhost:8000/api/labor/list", {
+            const response = await axios.get("/labor/list", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setLaborList(response.data);
@@ -204,3 +204,4 @@ const UsersIcon = (props: any) => (
 );
 
 export default FindLaborPage;
+

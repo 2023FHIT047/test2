@@ -20,7 +20,7 @@ const ForecastModels = () => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8000/api/weather/farm-forecast/", {
+                const res = await axios.get("/weather/farm-forecast/", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setWeatherData(res.data);
@@ -188,3 +188,4 @@ const ForecastCard = ({ icon, label, value, desc, color, delay }: any) => (
 );
 
 export default ForecastModels;
+

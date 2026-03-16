@@ -19,7 +19,7 @@ const CropAnalytics = () => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8000/api/crop/analytics", {
+                const res = await axios.get("/crop/analytics", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setData(res.data);
@@ -193,3 +193,4 @@ const AnalyticsCard = ({ icon, label, value, desc, color, delay }: any) => (
 );
 
 export default CropAnalytics;
+

@@ -66,7 +66,7 @@ const FarmLocationSetup = () => {
                     return;
                 }
 
-                const response = await axios.get("http://localhost:8000/api/profile", {
+                const response = await axios.get("/profile", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
 
@@ -122,7 +122,7 @@ const FarmLocationSetup = () => {
 
         try {
             const token = localStorage.getItem("token");
-            await axios.post('http://localhost:8000/api/save-farm-location/', {
+            await axios.post('/save-farm-location/', {
                 latitude: markerPosition.lat,
                 longitude: markerPosition.lng
             }, {
@@ -254,3 +254,4 @@ const FarmLocationSetup = () => {
 };
 
 export default FarmLocationSetup;
+

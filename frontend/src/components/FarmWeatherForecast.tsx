@@ -96,7 +96,7 @@ const FarmWeatherForecast = () => {
         const fetchWeather = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get('http://localhost:8000/api/weather/farm-forecast/', {
+                const response = await axios.get('/weather/farm-forecast/', {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setWeatherData(response.data);
@@ -344,3 +344,4 @@ const ForecastCard = ({ day, icon, max, min }: any) => (
 );
 
 export default FarmWeatherForecast;
+

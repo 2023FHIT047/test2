@@ -17,7 +17,7 @@ const LaborProfileDetail = () => {
             setIsLoading(true);
             try {
                 const token = localStorage.getItem("token");
-                const response = await axios.get(`http://localhost:8000/api/labor/detail/${id}`, {
+                const response = await axios.get(`/labor/detail/${id}`, {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setLabor(response.data);
@@ -237,3 +237,4 @@ const SidebarItem = ({ icon, label, active = false }: any) => (
 );
 
 export default LaborProfileDetail;
+

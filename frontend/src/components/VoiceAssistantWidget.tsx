@@ -296,3 +296,4 @@ const VoiceAssistantWidget = ({ weatherData }: { weatherData: any, user?: any })
 };
 
 export default VoiceAssistantWidget;
+

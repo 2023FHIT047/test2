@@ -23,14 +23,14 @@ const LaborDashboard = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("token");
-            const response = await axios.get("http://localhost:8000/api/labor/profile", {
+            const response = await axios.get("/labor/profile", {
                 headers: { Authorization: `Bearer ${token}` }
             });
             setProfile(response.data);
 
             // Fetch available jobs
             try {
-                const jobsRes = await axios.get("http://localhost:8000/api/labor/jobs", {
+                const jobsRes = await axios.get("/labor/jobs", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 setAvailableJobs(jobsRes.data.results || jobsRes.data || []);
@@ -41,7 +41,7 @@ const LaborDashboard = () => {
             // Fetch weather data
             if (response.data.latitude && response.data.longitude) {
                 try {
-                    const weatherRes = await axios.get(`http://localhost:8000/api/weather/?lat=${response.data.latitude}&lon=${response.data.longitude}`, {
+                    const weatherRes = await axios.get(`/weather/?lat=${response.data.latitude}&lon=${response.data.longitude}`, {
                         headers: { Authorization: `Bearer ${token}` }
                     });
                     setWeatherData(weatherRes.data);
@@ -62,7 +62,7 @@ const LaborDashboard = () => {
         try {
             const token = localStorage.getItem("token");
             const newAvailability = profile.availability === 'available' ? 'busy' : 'available';
-            const response = await axios.patch("http://localhost:8000/api/labor/availability",
+            const response = await axios.patch("/labor/availability",
                 { availability: newAvailability },
                 { headers: { Authorization: `Bearer ${token}` } }
             );
@@ -343,3 +343,4 @@ const LaborDashboard = () => {
 };
 
 export default LaborDashboard;
+

@@ -41,10 +41,10 @@ const SatelliteMonitoringPanel = () => {
             try {
                 const token = localStorage.getItem('access_token') || localStorage.getItem('token');
                 const [satRes, summaryRes] = await Promise.all([
-                    axios.get('http://localhost:8000/api/satellite/crop-health', {
+                    axios.get('/satellite/crop-health', {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get('http://localhost:8000/api/crop/summary', {
+                    axios.get('/crop/summary', {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -64,7 +64,7 @@ const SatelliteMonitoringPanel = () => {
         setIsDownloading(true);
         try {
             const token = localStorage.getItem('access_token') || localStorage.getItem('token');
-            const response = await axios.get('http://localhost:8000/api/crop-report', {
+            const response = await axios.get('/crop-report', {
                 headers: { Authorization: `Bearer ${token}` },
                 responseType: 'blob'
             });
@@ -385,3 +385,4 @@ const SatelliteMonitoringPanel = () => {
 };
 
 export default SatelliteMonitoringPanel;
+

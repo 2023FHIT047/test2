@@ -320,3 +320,4 @@ const InteractiveWeatherMap = ({
 };
 
 export default InteractiveWeatherMap;
+

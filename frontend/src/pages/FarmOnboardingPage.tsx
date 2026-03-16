@@ -22,7 +22,7 @@ const FarmOnboardingPage = () => {
         const fetchProfile = async () => {
             try {
                 const token = localStorage.getItem("token");
-                const res = await axios.get("http://localhost:8000/api/profile", {
+                const res = await axios.get("/profile", {
                     headers: { Authorization: `Bearer ${token}` }
                 });
                 if (res.data) {
@@ -50,7 +50,7 @@ const FarmOnboardingPage = () => {
         setIsLoading(true);
         try {
             const token = localStorage.getItem("token");
-            await axios.patch("http://localhost:8000/api/profile", formData, {
+            await axios.patch("/profile", formData, {
                 headers: { Authorization: `Bearer ${token}` }
             });
             // Redirect back to farming calendar to see results immediately
@@ -200,3 +200,4 @@ const FarmOnboardingPage = () => {
 };
 
 export default FarmOnboardingPage;
+

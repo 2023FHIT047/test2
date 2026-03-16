@@ -21,10 +21,10 @@ const RiskAnalytics = () => {
             try {
                 const token = localStorage.getItem("token");
                 const [riskRes, disasterRes] = await Promise.all([
-                    axios.get("http://localhost:8000/api/risk/analysis", {
+                    axios.get("/risk/analysis", {
                         headers: { Authorization: `Bearer ${token}` }
                     }),
-                    axios.get("http://localhost:8000/api/weather/disaster-alerts/", {
+                    axios.get("/weather/disaster-alerts/", {
                         headers: { Authorization: `Bearer ${token}` }
                     })
                 ]);
@@ -272,3 +272,4 @@ const RiskCard = ({ title, level, desc, action, delay }: any) => {
 };
 
 export default RiskAnalytics;
+

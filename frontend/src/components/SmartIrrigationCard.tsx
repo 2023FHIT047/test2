@@ -19,7 +19,7 @@ const SmartIrrigationCard: React.FC = () => {
             try {
                 // In a real environment, we'd use the centralized axios instance
                 const token = localStorage.getItem('token');
-                const response = await fetch('http://localhost:8000/api/irrigation/recommendation', {
+                const response = await fetch('/irrigation/recommendation', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -147,3 +147,4 @@ const SmartIrrigationCard: React.FC = () => {
 };
 
 export default SmartIrrigationCard;
+
